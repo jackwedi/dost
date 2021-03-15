@@ -2,12 +2,21 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    type: mongoose.SchemaTypes.Mixed,
-    pseudo: String,
-    dateOfBirth: Date,
+    googleId: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    dateOfBirth: {
+        type: Date,
+        required: true
+    },
     wishList: [String],
-    // required: true,
-    // unique: true
 }, {
     timestamps: true
 });
