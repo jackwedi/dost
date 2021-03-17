@@ -17,11 +17,11 @@ connection.once('open', () => {
   console.log("Connected to MONGODB");
 });
 
-const usersRouter = require('./routes/users');
-app.use('/users', usersRouter);
+const userRouter = require('./routes/user');
+app.use('/user', userRouter);
 
-const groupsRouter = require('./routes/groups');
-app.use('/groups', groupsRouter);
+const groupRouter = require('./routes/group');
+app.use('/group', groupRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
