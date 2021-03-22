@@ -9,7 +9,6 @@ const groupSchema = new Schema({
     users: [ {
         type: ObjectId,
         ref: "User",
-        unique: true,
         required: true
     }]
 }, {

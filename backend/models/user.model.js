@@ -17,7 +17,7 @@ const userSchema = new Schema({
     },
     wishList: [String],
 }, {
-    timestamps: true
+    unique: true
 });
 
 const User = mongoose.model('User', userSchema);
