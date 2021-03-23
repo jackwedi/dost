@@ -3,17 +3,14 @@ import { GoogleLogout } from 'react-google-login';
 const clientId = "612978323774-ab11267e2mg48nrmrvkhkclkavu3fdej.apps.googleusercontent.com"
 
 function LogoutButton(props) {
-    const onSuccess = () => {
-        props.onSuccess();
-        console.log('LOGGED OUT 👋');
-    }
 
     return (
         <div>
             <GoogleLogout
                 clientId={clientId}
                 buttonText="Bye 👋"
-                onLogoutSuccess={onSuccess}
+                onLogoutSuccess={props.onSuccess}
+                onFailure={(err) => props.onFailure(err)}
                 theme="dark"
             />
         </div>

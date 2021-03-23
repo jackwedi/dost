@@ -1,7 +1,7 @@
 
 import React from 'react';
-import LogoutButton from './logout';
-import LoginButton from './login';
+import LogoutButton from './logoutButton';
+import LoginButton from './loginButton';
 
 class LoginControl extends React.Component {
     constructor(props) {
@@ -18,6 +18,8 @@ class LoginControl extends React.Component {
     }
 
     handleLogin(res) {
+        console.log(`LOGGED IN 👌`, res.profileObj);
+
         this.setState({
             isLogged: true,
             ...res.profileObj
@@ -25,11 +27,16 @@ class LoginControl extends React.Component {
     }
 
     handleLogout() {
+        console.log('LOGGED OUT 👋');
         this.setState({ isLogged: false });
     }
 
+    handleFailing(log) {
+        console.log(log);
+    }
+
     render() {
-        let button = this.state.isLogged ? <LogoutButton onSuccess = {this.handleLogout}/> : <LoginButton onSuccess = {this.handleLogin}/>;
+        let button = this.state.isLogged ? <LogoutButton onSuccess = {this.handleLogout} onFailure = {this.handleFailing}/> : <LoginButton onSuccess = {this.handleLogin} onFailure = {this.handleFailing}/>;
         return (
             <div>
                 {this.state.isLogged &&
