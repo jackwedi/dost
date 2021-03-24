@@ -2,6 +2,7 @@
 import React from 'react';
 import LogoutButton from './logoutButton';
 import LoginButton from './loginButton';
+import axios from 'axios';
 
 class LoginControl extends React.Component {
     constructor(props) {
@@ -17,13 +18,35 @@ class LoginControl extends React.Component {
         this.handleLogout = this.handleLogout.bind(this);
     }
 
-    handleLogin(res) {
+    async handleLogin(res) {
         console.log(`LOGGED IN 👌`, res.profileObj);
 
         this.setState({
             isLogged: true,
             ...res.profileObj
         });
+
+        let user = (await axios.get(`http://localhost:1337/user/${this.state.googleId}`)).data;
+
+        if (!user) {
+            // Only when entered Date
+            console.log("NEW USER");
+            user = await axios.post(`http://localhost:1337/user`, { 
+                googleID: this.state.googleId,
+                name: this.state.givenName,
+                // INPUT DATE
+                dateOfBirth: Date.now(),
+            }).data;
+        }
+
+        console.log(user);
+
+        this.setState({
+            wishList: user.wishList.map((item) => <li key={item} > {item}</li>),
+            dateOfBirth: user.dateOfBirth,
+            _id: user._id
+        });
+
     }
 
     handleLogout() {
@@ -44,6 +67,15 @@ class LoginControl extends React.Component {
                 }
                 <p>Hello {this.state.isLogged ? this.state.givenName : `please Log in`}</p>
                 {button}
+
+                <br/>
+                <br/>
+                <br/>
+
+                {this.state.isLogged &&
+                                <ul>WISH LIST{this.state.wishList}</ul>
+                }
+
             </div>
         );
     }
