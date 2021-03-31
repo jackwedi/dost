@@ -2,8 +2,8 @@ import { Segment, SegmentGroup } from 'semantic-ui-react'
 
 function WishList(props) {
     let segments;
-    if (props.wishList) {
-        segments = props.wishList.map((item) =>  <Segment  >{item}</Segment>);
+    if (props.list) {
+        segments = props.list.map((item, index) =>  <Segment key={index}>{item}</Segment>);
     }
     return (
         <div>

@@ -3,7 +3,6 @@ import React from 'react';
 import LogoutButton from './logoutButton';
 import LoginButton from './loginButton';
 import axios from 'axios';
-import { Segment } from 'semantic-ui-react'
 import WishList from './wishlist';
 
 class LoginControl extends React.Component {
@@ -62,15 +61,11 @@ class LoginControl extends React.Component {
 
     loggedUI() {
         console.log(this.state.wishList)
-        let segments;
-        if (this.state.wishList) {
-            segments = this.state.wishList.map((item) =>  <Segment  >{item}</Segment>);
-        }
 
         return (<div>
             <img src={this.state.imageUrl} alt="icon"/>
             <p>Hello {this.state.givenName }</p>
-            <WishList wishList = {this.state.wishList}></WishList>
+            <WishList list = {this.state.wishList}></WishList>
             <br/>
             <br/>
             <br/>
