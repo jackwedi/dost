@@ -8,7 +8,7 @@ function LogoutButton(props) {
         <div>
             <GoogleLogout
                 clientId={clientId}
-                buttonText="Bye 👋"
+                buttonText="Leave 👋"
                 onLogoutSuccess={props.onSuccess}
                 onFailure={(err) => props.onFailure(err)}
                 theme="dark"
