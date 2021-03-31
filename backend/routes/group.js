@@ -8,11 +8,9 @@ router.route('/').get(async (req, res) => {
 });
 
 router.route('/:userId').get(async (req, res) => {
-    const param = req.body;
-    const group = await Group.find({
-        users: req.params.userId
-    });
-    res.send(group);
+    Group.find({ users: req.params.userId })
+    .then((value) => res.send(value))
+    .catch(err => res.status(400).json('Error: ' + err));
 });
 
 

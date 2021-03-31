@@ -1,14 +1,14 @@
 import { Segment, SegmentGroup } from 'semantic-ui-react'
 
-function WishList(props) {
+function Groups(props) {
     let segments;
     if (props.list) {
-        segments = props.list.map((item, index) =>  <Segment key={index}>{item}</Segment>);
+        segments = props.list.map((item, index) =>  <Segment key={index}>{item.pseudo}</Segment>);
     }
     return (
         <div>
         <SegmentGroup >
-            <Segment >Wishlist</Segment>
+            <Segment >Groups</Segment>
             <SegmentGroup>
                 {segments}
             </SegmentGroup>
@@ -18,4 +18,4 @@ function WishList(props) {
     );
 }
 
-export default WishList;
+export default Groups;
