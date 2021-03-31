@@ -29,6 +29,10 @@ class LoginControl extends React.Component {
             ...res.profileObj
         });
 
+        await this.loadDatas();
+    }
+
+    async loadDatas() {
         let user = (await axios.get(`http://localhost:1337/user/${this.state.googleId}`)).data;
 
         if (!user) {
@@ -43,8 +47,6 @@ class LoginControl extends React.Component {
         }
         
         let groups =  (await axios.get(`http://localhost:1337/group/${user._id}`)).data;
-        console.log(groups);
-
 
         this.setState({
             wishList: user.wishList,
@@ -52,6 +54,13 @@ class LoginControl extends React.Component {
             _id: user._id,
             groups
         });
+    }
+
+    async addItemToWishList(value) {
+        console.log(this.state);
+        if (!value) return;
+        let user = (await axios.post(`http://localhost:1337/user/addwish/${this.state.googleId}/${value}`)).data;
+        this.setState({wishList: user.wishList});
     }
 
     handleLogout() {
@@ -63,15 +72,14 @@ class LoginControl extends React.Component {
         console.log(log);
     }
 
-    loggedUI() {
-        console.log(this.state.wishList)
 
+    loggedUI() {
         return (<div>
             <img src={this.state.imageUrl} alt="icon"/>
             <p>Hello {this.state.givenName }</p>
             <Grid>
 
-                <WishList list = {this.state.wishList}></WishList>
+                <WishList list = {this.state.wishList} addItem = {this.addItemToWishList.bind(this)}></WishList>
                 <Groups list = {this.state.groups}></Groups>
 
             </Grid>

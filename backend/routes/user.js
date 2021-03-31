@@ -9,6 +9,16 @@ router.route('/:googleId').get(async (req, res) => {
     return res.send(user);
 });
 
+router.route('/addwish/:googleId/:item').post(async (req, res) => {
+    const user = await User.findOneAndUpdate({
+        googleID: req.params.googleId
+    }, {
+        $push: { wishList: req.params.item }
+    }, {new: true});
+    console.log("Updated WISHLIST", user.name, user.wishList);
+    return res.send(user);
+});
+
 router.route('/').post(async (req, res) => {
     const param = req.body;
     const userAlreadyRegistered = await User.findOne({

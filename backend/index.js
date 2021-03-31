@@ -11,6 +11,7 @@ app.use(express.json());
 
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true});
+mongoose.set('useFindAndModify', false);
 
 const connection = mongoose.connection;
 connection.once('open', () => {
