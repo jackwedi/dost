@@ -16,7 +16,7 @@ class LoginControl extends React.Component {
         // googleId
         // imageUrl
         // name
-        this.state = { isLogged: false }
+        this.state = { isLogged: false, validInput: true }
         this.handleLogin = this.handleLogin.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
     }
@@ -38,14 +38,16 @@ class LoginControl extends React.Component {
         if (!user) {
             // Only when entered Date
             console.log("NEW USER");
-            user = await axios.post(`http://localhost:1337/user`, { 
+            const createUserResponse = await axios.post(`http://localhost:1337/user`, { 
                 googleID: this.state.googleId,
                 name: this.state.givenName,
                 // INPUT DATE
                 dateOfBirth: Date.now(),
-            }).data;
+            });
+
+            user = createUserResponse.data;
         }
-        
+
         let groups =  (await axios.get(`http://localhost:1337/group/${user._id}`)).data;
 
         this.setState({
@@ -57,10 +59,17 @@ class LoginControl extends React.Component {
     }
 
     async addItemToWishList(value) {
-        console.log(this.state);
+        // Check if a word https://api.dictionaryapi.dev/api/v2/entries/en_US/hello
         if (!value) return;
+        try {
+            await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${value}`);
+        } catch(e) {
+            console.log("bad word");
+            this.setState({validInput: false});
+            return;
+        }
         let user = (await axios.post(`http://localhost:1337/user/addwish/${this.state.googleId}/${value}`)).data;
-        this.setState({wishList: user.wishList});
+        this.setState({wishList: user.wishList, validInput: true});
     }
 
     handleLogout() {
@@ -72,14 +81,13 @@ class LoginControl extends React.Component {
         console.log(log);
     }
 
-
     loggedUI() {
         return (<div>
             <img src={this.state.imageUrl} alt="icon"/>
             <p>Hello {this.state.givenName }</p>
             <Grid>
 
-                <WishList list = {this.state.wishList} addItem = {this.addItemToWishList.bind(this)}></WishList>
+                <WishList list = {this.state.wishList} addItem = {this.addItemToWishList.bind(this)} validInput = {this.state.validInput}></WishList>
                 <Groups list = {this.state.groups}></Groups>
 
             </Grid>

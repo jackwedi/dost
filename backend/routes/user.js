@@ -19,6 +19,17 @@ router.route('/addwish/:googleId/:item').post(async (req, res) => {
     return res.send(user);
 });
 
+router.route('/removewish/:googleId/:item').post(async (req, res) => {
+    const user = await User.findOneAndUpdate({
+        googleID: req.params.googleId
+    }, {
+        $pull: { wishList: req.params.item }
+    }, {new: true});
+    console.log("Updated WISHLIST", user.name, user.wishList);
+    return res.send(user);
+});
+
+
 router.route('/').post(async (req, res) => {
     const param = req.body;
     const userAlreadyRegistered = await User.findOne({
@@ -30,19 +41,15 @@ router.route('/').post(async (req, res) => {
         return res.send(userAlreadyRegistered);
     }
 
-    await User.create({
+    User.create({
         googleID: param.googleID,
         name: param.name,
         dateOfBirth: param.dateOfBirth,
         wishlist: param.wishlist || [""]
     }, (err, doc) => {
-        if (err) {
-            return res.status(400).json('Error: ' + err);
-        } else {
-            return res.send(doc);
-        }
+        if (err) return res.status(400).json('Error: ' + err);
+        return res.send(doc);
     });
-
 });
 
 module.exports = router;

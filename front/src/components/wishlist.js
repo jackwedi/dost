@@ -1,13 +1,14 @@
 import { Segment, SegmentGroup } from 'semantic-ui-react'
-import { Button, Icon, Modal, Input, Header } from 'semantic-ui-react'
+import { Input, Label } from 'semantic-ui-react'
 import React from "react";
 
 function WishList(props) {
-    const [open, setOpen] = React.useState(false);
 
     let segments;
     if (props.list) {
-        segments = props.list.map((item, index) =>  <Segment key={index}>{item}</Segment>);
+        segments = props.list.map((item, index) =>  <Segment key={index} >
+            {item}
+        </Segment>);
     }
 
     let inputItem = null;
@@ -20,46 +21,22 @@ function WishList(props) {
             </SegmentGroup>
 
             <Segment >
-            <Modal
-                onClose={() => setOpen(false)}
-                onOpen={() => setOpen(true)}
-                open={open}
-                trigger={ 
-                    // <Button animated onClick={() => props.addItem("Test")}>
-                    <Button animated>
-                        <Button.Content visible>ADD</Button.Content>
-                        <Button.Content hidden>
-                            <Icon name='plus' />
-                        </Button.Content>
-                    </Button>
-                }
-            >
-                <Modal.Content>
-                    <Modal.Description>
-                    <Header>Add an item to your wishlist</Header>
-                    {/* <p>
-                        Enter the item name to add to the wish list.
-                    </p> */}
-                    </Modal.Description>
-                </Modal.Content>
-                <Modal.Actions>
-                    <Input placeholder="Item..." tiny onChange={(ev, data) => inputItem = data.value}/>
-                    <Button
-                    content="Add"
-                    labelPosition="right"
-                    icon="checkmark"
-                    onClick={() => {
-                        setOpen(false);
-                        props.addItem(inputItem);
-                    }}
-                    positive
-                    />
-                </Modal.Actions>
-            </Modal>
+            <Input placeholder='Add wish...' onChange={(ev, data) => inputItem = data.value}
+                action={{
+                    onClick: () => props.addItem(inputItem),
+                    color: props.validInput ? 'teal' : 'red',
+                    icon: 'plus',
+                }}
+            />
+
+            {!props.validInput && 
+                <Label color='red' pointing prompt>
+                Your password must be 6 characters or more
+            </Label>
+            }
             </Segment>
-
         </SegmentGroup>
-
+            
 
         </div>
 
