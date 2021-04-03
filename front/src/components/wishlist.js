@@ -1,4 +1,4 @@
-import { Input, Label, Dimmer, Loader, Segment, SegmentGroup } from 'semantic-ui-react'
+import { Input, Label, Dimmer, Loader, Segment, SegmentGroup, Button, Table, Header, List } from 'semantic-ui-react'
 import React from "react";
 import axios from 'axios';
 
@@ -30,25 +30,38 @@ class Wishlist extends React.Component {
         this.setState({inputItem: value, validInput: true});
     }
 
+    onRemoveItem(value) {
+        this.props.removeItem(this.props.list[value]);
+    }
+
     render() {
         let segments;
         if (this.props.list) {
-            segments = this.props.list.map((item, index) =>  <Segment key={index} >
-                {item}
-            </Segment>);
+            segments = this.props.list.map((item, index) =>  {
+                return (
+                    <Table.Row>
+
+                    <Table.Cell collapsing>                    
+                        <Button size='tiny' inverted color='red' icon='remove' circular onClick={ (ev, data) => this.onRemoveItem(index)}></Button>
+                    </Table.Cell>
+                    <Table.Cell>{item}</Table.Cell>
+                    </Table.Row>
+                );
+            });
         }
 
         return (
             <div>
                 <SegmentGroup >
                     <Segment >
-                        Wishlist
+                        <Header>WISHLIST</Header>
                     </Segment>
+                    <Segment>
 
-                    <SegmentGroup>
-                        {segments}
-                    </SegmentGroup>
-        
+                    <Table compact >
+                            {segments}
+                    </Table>
+                    </Segment>
                     <Segment>
                         {this.state.checkingWord && 
                             <Dimmer active>
@@ -60,7 +73,7 @@ class Wishlist extends React.Component {
                             action={{
                                 onClick: () => this.checkItem(),
                                 color: this.state.validInput ? 'teal' : 'red',
-                                icon: 'plus',
+                                icon: 'plus'
                             }}
                         >
 

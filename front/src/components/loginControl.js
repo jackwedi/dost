@@ -16,7 +16,7 @@ class LoginControl extends React.Component {
         // googleId
         // imageUrl
         // name
-        this.state = { isLogged: false, validInput: true }
+        this.state = { isLogged: false }
         this.handleLogin = this.handleLogin.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
     }
@@ -60,8 +60,13 @@ class LoginControl extends React.Component {
     }
 
     async addItemToWishList(value) {
-        let user = (await axios.post(`http://localhost:1337/user/addwish/${this.state.googleId}/${value}`)).data;
-        this.setState({wishList: user.wishList });
+        let request = (await axios.post(`http://localhost:1337/user/addwish/${this.state.googleId}/${value}`)).data;
+        this.setState({wishList: request.wishList });
+    }
+
+    async removeItemToWishList(value) {
+        let request = (await axios.post(`http://localhost:1337/user/removewish/${this.state.googleId}/${value}`)).data;
+        this.setState({wishList: request.wishList });
     }
 
     handleLogout() {
@@ -79,7 +84,11 @@ class LoginControl extends React.Component {
             <p>Hello {this.state.givenName }</p>
             <Grid>
 
-                <WishList list = {this.state.wishList} addItem = {this.addItemToWishList.bind(this)} validInput = {this.state.validInput}></WishList>
+                <WishList 
+                    list = {this.state.wishList}
+                    addItem = {this.addItemToWishList.bind(this)}
+                    removeItem = {this.removeItemToWishList.bind(this)}
+                />
                 <Groups list = {this.state.groups}></Groups>
 
             </Grid>
