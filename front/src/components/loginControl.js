@@ -56,20 +56,12 @@ class LoginControl extends React.Component {
             _id: user._id,
             groups
         });
+        console.log(user.wishList)
     }
 
     async addItemToWishList(value) {
-        // Check if a word https://api.dictionaryapi.dev/api/v2/entries/en_US/hello
-        if (!value) return;
-        try {
-            await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${value}`);
-        } catch(e) {
-            console.log("bad word");
-            this.setState({validInput: false});
-            return;
-        }
         let user = (await axios.post(`http://localhost:1337/user/addwish/${this.state.googleId}/${value}`)).data;
-        this.setState({wishList: user.wishList, validInput: true});
+        this.setState({wishList: user.wishList });
     }
 
     handleLogout() {
