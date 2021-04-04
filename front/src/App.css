@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+tbody {
+  display: block;
+  height: 150px;
+  overflow: auto;
+}
+
+thead,
+tbody tr {
+  display: table;
+  width: 100%;
+}
