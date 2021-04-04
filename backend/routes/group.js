@@ -9,39 +9,32 @@ router.route('/').get(async (req, res) => {
 
 router.route('/:userId').get(async (req, res) => {
     Group.find({ users: req.params.userId })
-    .then((value) => res.send(value))
+    .then((value) => {
+        console.log("Found groups :", value);
+        res.send(value);
+    })
     .catch(err => res.status(400).json('Error: ' + err));
 });
-
 
 router.route('/create').post(async (req, res) => {
     const param = req.body;
     Group.create({pseudo: param.pseudo})
-    .then(() => res.json(`Created ${param.pseudo} with `))
+    .then((value) => {
+        console.log("Created group :", value);
+        res.send(value);
+    })
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
 router.route('/join').post(async (req, res) => {
     const param = req.body;
-
-    await Group.updateOne({
+    const queryRes = await Group.findOneAndUpdate({
         _id: param.groupID
-    }, {
-        $push: {
-            users: param.userId
-        },
-    },
-        {
-            new: true,
-            upsert: true
-        }, 
-        (err, response) => {
-            if (err) res.status(400).json('Error: ' + err)
-            else {
-                res.json(response);
-            }
-        } 
+    }, { $push: { users: param.userId } },
+    { new: true }
     );
+    return res.send(queryRes);
+
 });
 
 module.exports = router;

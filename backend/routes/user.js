@@ -9,6 +9,12 @@ router.route('/:googleId').get(async (req, res) => {
     return res.send(user);
 });
 
+router.route('/objectID/:objectID').get(async (req, res) => {
+    const user = await User.findById(req.params.objectID).exec();
+    console.log("FOUND",  user)
+    return res.send(user);
+});
+
 router.route('/addwish/:googleId/:item').post(async (req, res) => {
     const user = await User.findOneAndUpdate({
         googleID: req.params.googleId
