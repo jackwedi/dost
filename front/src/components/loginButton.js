@@ -11,7 +11,7 @@ function LoginButton(props) {
                 onSuccess={(res) => props.onSuccess(res)}
                 onFailure={(err) => props.onFailure(err)}
                 cookiePolicy={'single_host_origin'}
-                isSignedIn={true}
+                // isSignedIn={true}
             />
         </div>
     );

@@ -8,7 +8,6 @@ import {
   Button,
   Table,
   Header,
-  List,
 } from "semantic-ui-react";
 import React from "react";
 import axios from "axios";

@@ -5,11 +5,12 @@ import axios from "axios";
 import WishList from "./wishlist";
 import Groups from "./groups";
 import { Grid } from "semantic-ui-react";
+import BirthdayModal from "./birthdayModal";
 
 class LoginControl extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isLogged: false };
+    this.state = { isLogged: false, firstLog: false, dateModalOpen: false };
     this.handleLogin = this.handleLogin.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
@@ -28,33 +29,22 @@ class LoginControl extends React.Component {
       ...res.profileObj,
     });
 
-    await this.loadDatas();
-  }
-
-  async loadDatas() {
     let user = (
       await axios.get(`http://localhost:1337/user/${this.state.googleId}`)
     ).data;
 
-    if (!user) {
-      // Only when entered Date
-      console.log("NEW USER");
-      const createUserResponse = await axios.post(
-        `http://localhost:1337/user`,
-        {
-          googleID: this.state.googleId,
-          name: this.state.givenName,
-          // INPUT DATE
-          dateOfBirth: Date.now(),
-        }
-      );
-
-      user = createUserResponse.data;
+    if (user) {
+      await this.loadDatas(user);
+    } else {
+      this.setState({ firstLog: true, modalOpen: true });
     }
+  }
 
+  async loadDatas(user) {
     let groupsRequestData = (
       await axios.get(`http://localhost:1337/group/${user._id}`)
     ).data;
+
     if (!groupsRequestData) return;
 
     let groups = [];
@@ -105,12 +95,36 @@ class LoginControl extends React.Component {
     console.log(log);
   }
 
+  setModalVisible(value) {
+    this.setState({ modalOpen: value });
+    console.log(value)
+  }
+
+  async createUser(dateOfBirth) {
+    // Only when entered Date
+    console.log("NEW USER");
+    const createUserResponse = await axios.post(
+      `http://localhost:1337/user`,
+      {
+        googleID: this.state.googleId,
+        name: this.state.givenName,
+        dateOfBirth
+      }
+    );
+
+    const user = createUserResponse.data;
+
+    await this.loadDatas(user);
+    this.setState({modalOpen: false})
+  }
+
   loggedUI() {
     return (
       <div>
         <img src={this.state.imageUrl} alt="icon" />
         <p>Hello {this.state.givenName}</p>
         <Grid>
+          <BirthdayModal modalOpen={this.state.modalOpen} onModalStateChange={this.setModalVisible.bind(this)} onConfirmDOB={this.createUser.bind(this)}></BirthdayModal>
           <WishList
             list={this.state.wishList}
             addItem={this.addItemToWishList.bind(this)}
