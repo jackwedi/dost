@@ -188,6 +188,7 @@ class Main extends React.Component {
     const menuButton = !this.state.isLogged ? 
     (<LoginButton onSuccess={this.handleLogin.bind(this)}  onFailure={this.handleFailing.bind(this)}/>) : 
     (<LogoutButton onSuccess={this.handleLogout.bind(this)}  onFailure={this.handleFailing.bind(this)}/>);
+
     const body = this.state.isLogged ? (
       <Dashboard
         data={this.state}
@@ -204,25 +205,21 @@ class Main extends React.Component {
     : (
       <header className="App-header" style={{"padding-top": 4.5 + "em"}}>
         <Grid inverted>
-          <Grid.Row>
-          <Grid.Column width ={15}>
+          <Grid.Row columns={"equal"}>
+          <Grid.Column width >
             <Header content=" LOGIN with GOOGLE to access DOST"/>
 
           </Grid.Column>
           <Grid.Column width ={1} floated='right'>
-          <Tween from= {{  rotation: 260, x: 0 }} to={{  rotation: 260, x: 40  }} duration={1}  repeat={-1} yoyo>
-                  <div >
-                  <Icon name="arrow down" key="arrowIcon"></Icon>
+            {/* <Tween from= {{  rotation: 180, y: 0 }} to={{  rotation: 180, y: (- 0.5 + "em")  }} duration={1}  repeat={-1} yoyo>
+              <div >
+                <Icon name="arrow down" key="arrowIcon"></Icon>
+              </div>
 
-                  </div>
-
-              </Tween>
+            </Tween> */}
           </Grid.Column>
             </Grid.Row>
         </Grid>
-        {/* <Controls playState={PlayState.play}> */}
-
-            {/* </Controls> */}
       </header>
     );
 
@@ -235,9 +232,18 @@ class Main extends React.Component {
           </Menu.Item>  
           <Menu.Item position='right'>
             {menuButton}
+            
           </Menu.Item>
         </Menu>
-
+        {!this.state.isLogged && 
+          <Container style={{"padding-top": 6.5 + "em"}} textAlign='left' >
+            <Tween from= {{  rotation: 180, y: 0 }} to={{  rotation: 180, y: (- 0.5 + "em")  }} duration={1}  repeat={-1} yoyo>
+                <div >
+                  <Icon name="arrow down" key="arrowIcon"></Icon>
+                </div>
+            </Tween>
+          </Container>
+        }
         {body}
 
       </div>
