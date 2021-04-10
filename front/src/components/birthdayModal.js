@@ -71,7 +71,7 @@ class BirthdayModal extends React.Component {
 
     onConfirm() {
         if (this.state.validForm) {
-            this.props.onConfirmDOB(new Date(`${this.state.month} ${this.parsedDay}, ${this.parsedYear}`))
+            this.props.onConfirm(new Date(`${this.state.month} ${this.parsedDay}, ${this.parsedYear}`))
         }
     }
 

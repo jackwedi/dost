@@ -6,6 +6,7 @@ const { ObjectId } = mongoose.Schema.Types;
 const groupSchema = new Schema({
     type: mongoose.SchemaTypes.Mixed,
     pseudo: String,
+    sharedId: String,
     users: [ {
         type: ObjectId,
         ref: "User",

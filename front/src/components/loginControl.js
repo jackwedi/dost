@@ -4,13 +4,15 @@ import LoginButton from "./loginButton";
 import axios from "axios";
 import WishList from "./wishlist";
 import Groups from "./groups";
-import { Grid } from "semantic-ui-react";
+import { Grid, Header } from "semantic-ui-react";
 import BirthdayModal from "./birthdayModal";
+import CreateGroupModal from "./createGroupModal";
+import JoinGroupModal from "./joinGroupModal";
 
 class LoginControl extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isLogged: false, firstLog: false, dateModalOpen: false };
+    this.state = { isLogged: false, firstLog: false };
     this.handleLogin = this.handleLogin.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
@@ -29,27 +31,22 @@ class LoginControl extends React.Component {
       ...res.profileObj,
     });
 
-    let user = (
-      await axios.get(`http://localhost:1337/user/${this.state.googleId}`)
-    ).data;
-
-    if (user) {
-      await this.loadDatas(user);
-    } else {
-      this.setState({ firstLog: true, modalOpen: true });
-    }
+    await this.updateUserDatas();
   }
 
-  async loadDatas(user) {
+  async updateGroupDatas() {
     let groupsRequestData = (
-      await axios.get(`http://localhost:1337/group/${user._id}`)
+      await axios.get(`http://localhost:1337/group/user/${this.state.currentUser._id}`)
     ).data;
 
-    if (!groupsRequestData) return;
+    if (!groupsRequestData) {
+      console.log("NO GROUPS")
+      return;
+    };
 
     let groups = [];
     for (let group of groupsRequestData) {
-      let groupFormatted = { pseudo: group.pseudo, members: [] };
+      let groupFormatted = { pseudo: group.pseudo, members: [], sharedId: group.sharedId };
       const promises = group.users.map((member) => {
         return axios.get(`http://localhost:1337/user/objectID/${member}`);
       });
@@ -61,11 +58,27 @@ class LoginControl extends React.Component {
     }
 
     this.setState({
-      wishList: user.wishList,
-      dateOfBirth: user.dateOfBirth,
-      currentUser: user,
       groups,
     });
+  }
+
+  async updateUserDatas() {
+    let user = (
+      await axios.get(`http://localhost:1337/user/${this.state.googleId}`)
+    ).data;
+
+    if (user) {
+      this.setState({         
+        wishList: user.wishList,
+        dateOfBirth: user.dateOfBirth,
+        currentUser: user
+      }, async () => {
+        await this.updateGroupDatas();
+      });
+    } else {
+      this.setState({ firstLog: true, birthdayModelOpen: true });
+    }
+
   }
 
   async addItemToWishList(value) {
@@ -95,9 +108,16 @@ class LoginControl extends React.Component {
     console.log(log);
   }
 
-  setModalVisible(value) {
-    this.setState({ modalOpen: value });
-    console.log(value)
+  setDOBModalVisible(value) {
+    this.setState({ birthdayModelOpen: value });
+  }
+
+  setCreateGroupModalVisible(value) {
+    this.setState({ createGroupModelOpen: value });
+  }
+
+  setJoinGroupModalVisible(value) {
+    this.setState({ joinGroupModelOpen: value });
   }
 
   async createUser(dateOfBirth) {
@@ -114,27 +134,83 @@ class LoginControl extends React.Component {
 
     const user = createUserResponse.data;
 
-    await this.loadDatas(user);
-    this.setState({modalOpen: false})
+    await this.updateUserDatas();
+    this.setState({birthdayModelOpen: false})
+  }
+
+  async createGroup(group) {
+    const createGroup = await axios.post(
+      `http://localhost:1337/group/create`,
+      {
+        pseudo: group
+      }
+    );
+    const joinRequest = await axios.post(`http://localhost:1337/group/join`,  
+    {
+      sharedId: createGroup.data.sharedId,
+      userId: this.state.currentUser._id
+
+    });
+
+    await this.updateGroupDatas();
+    this.setState({createGroupModelOpen: false})
+
+  }
+
+  async joinGroup(group) {
+    if (this.state.groups.filter((group) => group.sharedId === group).length > 0) {
+      console.log("ALREADY IN GROUP");
+      return;
+    }
+    const joinRequest = await axios.post(`http://localhost:1337/group/join`,
+    {
+      sharedId: group,
+      userId: this.state.currentUser._id
+
+    });
+    
+    await this.updateGroupDatas();
+    this.setState({joinGroupModelOpen: false})
+
+  }
+
+  async groupExists(groupId) {
+    const request = await axios.get(`http://localhost:1337/group/${groupId.replace("#", "~")}`);
+    return request.data;
   }
 
   loggedUI() {
     return (
       <div>
-        <img src={this.state.imageUrl} alt="icon" />
-        <p>Hello {this.state.givenName}</p>
-        <Grid>
-          <BirthdayModal modalOpen={this.state.modalOpen} onModalStateChange={this.setModalVisible.bind(this)} onConfirmDOB={this.createUser.bind(this)}></BirthdayModal>
-          <WishList
-            list={this.state.wishList}
-            addItem={this.addItemToWishList.bind(this)}
-            removeItem={this.removeItemToWishList.bind(this)}
-          />
-          <Groups
-            list={this.state.groups}
-            currentUser={this.state.currentUser}
-            updateUI={this.loadDatas.bind(this)}
-          ></Groups>
+        
+        <Header><img src={this.state.imageUrl} alt="icon" />Hello {this.state.givenName}</Header>
+        <Grid centered> 
+          <Grid.Row>
+
+          <Grid.Column >
+            <BirthdayModal modalOpen={this.state.birthdayModelOpen} onModalStateChange={this.setDOBModalVisible.bind(this)} onConfirm={this.createUser.bind(this)}></BirthdayModal>
+            <WishList
+              list={this.state.wishList}
+              addItem={this.addItemToWishList.bind(this)}
+              removeItem={this.removeItemToWishList.bind(this)}
+            />
+          </Grid.Column>
+          </Grid.Row>
+        <Grid.Row>
+
+          <Grid.Column >
+            <JoinGroupModal modalOpen={this.state.joinGroupModelOpen} onModalStateChange={this.setJoinGroupModalVisible.bind(this)} onConfirm={this.joinGroup.bind(this)}></JoinGroupModal>
+            <CreateGroupModal modalOpen={this.state.createGroupModelOpen} onModalStateChange={this.setCreateGroupModalVisible.bind(this)} onConfirm={this.createGroup.bind(this)}></CreateGroupModal>
+            <Groups
+              list={this.state.groups}
+              currentUser={this.state.currentUser}
+              updateUI={this.updateGroupDatas.bind(this)}
+              openCreateModal={this.setCreateGroupModalVisible.bind(this)}
+              openJoinModal={this.setJoinGroupModalVisible.bind(this)}
+            ></Groups>
+          </Grid.Column>
+        </Grid.Row>
+
         </Grid>
         <br />
         <br />

@@ -2,10 +2,14 @@ import React from "react";
 import {
   Segment,
   SegmentGroup,
-  Header,
   Select,
   Item,
   Icon,
+  Button,
+  Header,
+  Label,
+  Card,
+  Grid
 } from "semantic-ui-react";
 
 class Groups extends React.Component {
@@ -50,15 +54,37 @@ class Groups extends React.Component {
     return (today.getFullYear() === date.getFullYear()) && ((today.getMonth() + monthOffset) - date.getMonth() <= 1 )
   }
 
-  render() {
-    const groups = this.props.list?.map((group, index) => {
-      return { key: group.pseudo, text: group.pseudo, value: index };
-    });
+  groupSelectionElement(groups) {
+    return (
+      <Segment secondary>
+        <Grid columns='equal' verticalAlign='middle'>
+          <Grid.Row centered>
+            <Select
+              placeholder="Select your group"
+              options={groups}
+              onChange={(ev, data) => this.onSelectGroup(data)}
+            />
+          </Grid.Row>
+          <Grid.Row centered>
+            {this.state.selectedGroupIndex !== null &&
+              <Card
+              header={this.props.list[this.state.selectedGroupIndex]?.pseudo} 
+              description={`${this.props.list[this.state.selectedGroupIndex]?.members.length} members`}
+              meta={this.props.list[this.state.selectedGroupIndex]?.sharedId}
+              />
+            }
+          </Grid.Row>
+        </Grid>
+        {this.membersSegments()}
+      </Segment>
+    );
+  }
 
+  membersSegments() {
     let segments = [];
 
     if (this.props.list && this.state.selectedGroupIndex !== null) {
-      // Removes teh current User
+      // Removes the current User
       let members = this.props.list[this.state.selectedGroupIndex].members
       // .filter((user) => user.googleID !== this.props.currentUser.googleID);
       // Sorting
@@ -95,22 +121,39 @@ class Groups extends React.Component {
       );
     }
 
+    return segments;
+  }
+
+  render() {
+    const groups = this.props.list?.map((group, index) => {
+      return { key: group.pseudo, text: group.pseudo, value: index };
+    });
+
+    let segments = this.membersSegments();
+
     return (
       <div>
         <SegmentGroup>
-          <Segment>
-            <Header>GROUP</Header>
+          <Segment inverted color='teal' tertiary>
+            <Header>GROUPS 
+            </Header>
           </Segment>
+          {this.props?.list?.length > 0 && 
+            this.props.list && this.groupSelectionElement(groups)
+            
+          }
+
           <Segment>
-            {this.props.list && (
-              <Select
-                placeholder="Select your group"
-                options={groups}
-                onChange={(ev, data) => this.onSelectGroup(data)}
-              />
-            )}
+            <Button
+                circular
+                onClick= {(ev, data) => this.props.openCreateModal(true)}
+              >CREATE</Button>
+
+              <Button
+                circular
+                onClick= {(ev, data) => this.props.openJoinModal(true)}
+              >JOIN</Button>
           </Segment>
-          {segments}
         </SegmentGroup>
       </div>
     );
