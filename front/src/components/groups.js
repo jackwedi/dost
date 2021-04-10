@@ -7,7 +7,6 @@ import {
   Icon,
   Button,
   Header,
-  Label,
   Card,
   Grid
 } from "semantic-ui-react";
@@ -128,8 +127,6 @@ class Groups extends React.Component {
     const groups = this.props.list?.map((group, index) => {
       return { key: group.pseudo, text: group.pseudo, value: index };
     });
-
-    let segments = this.membersSegments();
 
     return (
       <div>

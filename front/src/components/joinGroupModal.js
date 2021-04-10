@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Header, Message, Form, Input, Select, Button } from "semantic-ui-react";
+import { Modal, Header, Message, Form, Input, Button } from "semantic-ui-react";
 import axios from "axios";
 
 class JoinGroupModal extends React.Component {
@@ -10,8 +10,6 @@ class JoinGroupModal extends React.Component {
 
     async checkInput() {
         let validForm = this.state.input.match(/^[a-z0-9À-ÿ#]+$/gi) ?? false;
-        validForm = validForm;
-        console.log(this.state.input, validForm)
         this.setState({ validForm });
     }
 
@@ -26,7 +24,7 @@ class JoinGroupModal extends React.Component {
             this.setState({ validForm: false });
             return;
         }
-        const res = await this.props.onConfirm(this.state.input);
+        await this.props.onConfirm(this.state.input);
     }
 
     async groupExists(groupId) {

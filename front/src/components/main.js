@@ -1,20 +1,20 @@
 import React from "react";
+import axios from "axios";
+import Dashboard from "./dashboard";
+import Login from "./login";
+import { Button, Card, Container, Header, Message, Menu, Grid, Label, Icon } from "semantic-ui-react";
 import LogoutButton from "./logoutButton";
 import LoginButton from "./loginButton";
-import axios from "axios";
-import WishList from "./wishlist";
-import Groups from "./groups";
-import { Grid, Header } from "semantic-ui-react";
-import BirthdayModal from "./birthdayModal";
-import CreateGroupModal from "./createGroupModal";
-import JoinGroupModal from "./joinGroupModal";
+import { Controls, PlayState, Tween } from 'react-gsap';
 
-class LoginControl extends React.Component {
+class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = { isLogged: false, firstLog: false };
     this.handleLogin = this.handleLogin.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
+    this.arrowIcon = null;
+    this.myTween = null;
   }
 
   async handleLogin(res) {
@@ -123,7 +123,7 @@ class LoginControl extends React.Component {
   async createUser(dateOfBirth) {
     // Only when entered Date
     console.log("NEW USER");
-    const createUserResponse = await axios.post(
+    await axios.post(
       `http://localhost:1337/user`,
       {
         googleID: this.state.googleId,
@@ -131,8 +131,6 @@ class LoginControl extends React.Component {
         dateOfBirth
       }
     );
-
-    const user = createUserResponse.data;
 
     await this.updateUserDatas();
     this.setState({birthdayModelOpen: false})
@@ -145,7 +143,8 @@ class LoginControl extends React.Component {
         pseudo: group
       }
     );
-    const joinRequest = await axios.post(`http://localhost:1337/group/join`,  
+
+    await axios.post(`http://localhost:1337/group/join`,  
     {
       sharedId: createGroup.data.sharedId,
       userId: this.state.currentUser._id
@@ -162,7 +161,8 @@ class LoginControl extends React.Component {
       console.log("ALREADY IN GROUP");
       return;
     }
-    const joinRequest = await axios.post(`http://localhost:1337/group/join`,
+
+    await axios.post(`http://localhost:1337/group/join`,
     {
       sharedId: group,
       userId: this.state.currentUser._id
@@ -179,65 +179,70 @@ class LoginControl extends React.Component {
     return request.data;
   }
 
-  loggedUI() {
-    return (
-      <div>
-        
-        <Header><img src={this.state.imageUrl} alt="icon" />Hello {this.state.givenName}</Header>
-        <Grid centered> 
-          <Grid.Row>
-
-          <Grid.Column >
-            <BirthdayModal modalOpen={this.state.birthdayModelOpen} onModalStateChange={this.setDOBModalVisible.bind(this)} onConfirm={this.createUser.bind(this)}></BirthdayModal>
-            <WishList
-              list={this.state.wishList}
-              addItem={this.addItemToWishList.bind(this)}
-              removeItem={this.removeItemToWishList.bind(this)}
-            />
-          </Grid.Column>
-          </Grid.Row>
-        <Grid.Row>
-
-          <Grid.Column >
-            <JoinGroupModal modalOpen={this.state.joinGroupModelOpen} onModalStateChange={this.setJoinGroupModalVisible.bind(this)} onConfirm={this.joinGroup.bind(this)}></JoinGroupModal>
-            <CreateGroupModal modalOpen={this.state.createGroupModelOpen} onModalStateChange={this.setCreateGroupModalVisible.bind(this)} onConfirm={this.createGroup.bind(this)}></CreateGroupModal>
-            <Groups
-              list={this.state.groups}
-              currentUser={this.state.currentUser}
-              updateUI={this.updateGroupDatas.bind(this)}
-              openCreateModal={this.setCreateGroupModalVisible.bind(this)}
-              openJoinModal={this.setJoinGroupModalVisible.bind(this)}
-            ></Groups>
-          </Grid.Column>
-        </Grid.Row>
-
-        </Grid>
-        <br />
-        <br />
-        <br />
-        <LogoutButton
-          onSuccess={this.handleLogout}
-          onFailure={this.handleFailing}
-        />
-      </div>
-    );
-  }
-
-  notLoggedUI() {
-    return (
-      <div>
-        <p>Hello {`please log`}</p>
-        <LoginButton
-          onSuccess={this.handleLogin}
-          onFailure={this.handleFailing}
-        />
-      </div>
-    );
+  componentDidMount() {
+    // this.myTween = Tween.to(this.arrowIcon, 1, {x: 100, y: 100});
   }
 
   render() {
-    return this.state.isLogged ? this.loggedUI() : this.notLoggedUI();
+    // return this.state.isLogged ? this.loggedUI() : this.notLoggedUI();
+    const menuButton = !this.state.isLogged ? 
+    (<LoginButton onSuccess={this.handleLogin.bind(this)}  onFailure={this.handleFailing.bind(this)}/>) : 
+    (<LogoutButton onSuccess={this.handleLogout.bind(this)}  onFailure={this.handleFailing.bind(this)}/>);
+    const body = this.state.isLogged ? (
+      <Dashboard
+        data={this.state}
+        setDOBModalVisible= { this.setDOBModalVisible.bind(this)}
+        createUser = {this.createUser.bind(this)}
+        addItemToWishList = {this.addItemToWishList.bind(this)}
+        removeItemToWishList = {this.removeItemToWishList.bind(this)}
+        setJoinGroupModalVisible = {this.setJoinGroupModalVisible.bind(this)}
+        joinGroup = {this.joinGroup.bind(this)}
+        setCreateGroupModalVisible = {this.setCreateGroupModalVisible.bind(this)}
+        createGroup = {this.createGroup.bind(this)}
+        updateGroupDatas = {this.updateGroupDatas.bind(this)}
+      />)
+    : (
+      <header className="App-header" style={{"padding-top": 4.5 + "em"}}>
+        <Grid inverted>
+          <Grid.Row>
+          <Grid.Column width ={15}>
+            <Header content=" LOGIN with GOOGLE to access DOST"/>
+
+          </Grid.Column>
+          <Grid.Column width ={1} floated='right'>
+          <Tween from= {{  rotation: 260, x: 0 }} to={{  rotation: 260, x: 40  }} duration={1}  repeat={-1} yoyo>
+                  <div >
+                  <Icon name="arrow down" key="arrowIcon"></Icon>
+
+                  </div>
+
+              </Tween>
+          </Grid.Column>
+            </Grid.Row>
+        </Grid>
+        {/* <Controls playState={PlayState.play}> */}
+
+            {/* </Controls> */}
+      </header>
+    );
+
+  
+    return (
+      <div className="App" >
+        <Menu inverted fixed='top' pointing>
+          <Menu.Item>
+              DOST
+          </Menu.Item>  
+          <Menu.Item position='right'>
+            {menuButton}
+          </Menu.Item>
+        </Menu>
+
+        {body}
+
+      </div>
+    );
   }
 }
 
-export default LoginControl;
+export default Main;

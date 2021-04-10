@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Header, Message, Form, Input, Select, Button } from "semantic-ui-react";
+import { Modal, Header, Message, Form, Input, Button } from "semantic-ui-react";
 
 class CreateGroupModal extends React.Component {
     constructor(props) {

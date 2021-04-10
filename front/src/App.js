@@ -1,17 +1,9 @@
 import './App.css';
-import LoginControl from './components/loginControl';
-import { Segment } from "semantic-ui-react";
+import Main from './components/main';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        DOST
-      </header>
-      <Segment>
-        <LoginControl/>
-      </Segment>
-    </div>
+    <Main/>
   );
 }
 
