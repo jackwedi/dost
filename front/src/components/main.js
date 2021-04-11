@@ -232,19 +232,21 @@ class Main extends React.Component {
           </Menu.Item>  
           <Menu.Item position='right'>
             {menuButton}
-            
           </Menu.Item>
         </Menu>
         {!this.state.isLogged && 
-          <Container style={{"padding-top": 6.5 + "em"}} textAlign='left' >
-            <Tween from= {{  rotation: 180, y: 0 }} to={{  rotation: 180, y: (- 0.5 + "em")  }} duration={1}  repeat={-1} yoyo>
+          <Container style={{"padding-top": 6.5 + "em"}} textAlign='right' fluid>
+            <Tween from= {{x: (- 0.5 + "em"), y: 0 }} to={{x: (- 0.5 + "em"),   y: (- 0.5 + "em")  }} duration={1}  repeat={-1} yoyo>
                 <div >
-                  <Icon name="arrow down" key="arrowIcon"></Icon>
+                  <Icon name="arrow down" key="arrowIcon"  flipped ='vertically' size='huge'></Icon>
                 </div>
             </Tween>
           </Container>
         }
+        <Container>
+
         {body}
+        </Container>
 
       </div>
     );
