@@ -1,11 +1,10 @@
 import React from "react";
 import axios from "axios";
 import Dashboard from "./dashboard";
-import Login from "./login";
-import { Button, Card, Container, Header, Message, Menu, Grid, Label, Icon } from "semantic-ui-react";
+import { Container, Header, Menu, Grid, Icon } from "semantic-ui-react";
 import LogoutButton from "./logoutButton";
 import LoginButton from "./loginButton";
-import { Controls, PlayState, Tween } from 'react-gsap';
+import { Tween } from 'react-gsap';
 
 class Main extends React.Component {
   constructor(props) {

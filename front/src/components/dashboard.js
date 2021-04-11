@@ -1,6 +1,6 @@
 import WishList from "./wishlist";
 import Groups from "./groups";
-import { Grid, Header } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import BirthdayModal from "./birthdayModal";
 import CreateGroupModal from "./createGroupModal";
 import JoinGroupModal from "./joinGroupModal";

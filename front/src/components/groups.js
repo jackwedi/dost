@@ -9,7 +9,6 @@ import {
   Header,
   Card,
   Grid,
-  Container
 } from "semantic-ui-react";
 
 class Groups extends React.Component {
