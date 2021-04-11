@@ -8,7 +8,8 @@ import {
   Button,
   Header,
   Card,
-  Grid
+  Grid,
+  Container
 } from "semantic-ui-react";
 
 class Groups extends React.Component {
@@ -132,25 +133,34 @@ class Groups extends React.Component {
       <div>
         <SegmentGroup>
           <Segment inverted color='teal' tertiary>
-            <Header>GROUPS 
-            </Header>
+            <Grid>
+              <Grid.Column verticalAlign='middle' width='2' >
+                <Header inverted content='GROUPS' ></Header>
+              </Grid.Column>
+              <Grid.Column width='14'>
+                  <Button
+                    inverted
+                    floated='right'
+                    circular
+                    onClick= {(ev, data) => this.props.openJoinModal(true)}
+                    content='JOIN'
+                  />
+
+              <Button
+                inverted
+                floated='right'
+                circular
+                onClick= {(ev, data) => this.props.openCreateModal(true)}
+                content='CREATE'
+              />
+
+              </Grid.Column>
+            </Grid>
           </Segment>
           {this.props?.list?.length > 0 && 
             this.props.list && this.groupSelectionElement(groups)
             
           }
-
-          <Segment>
-            <Button
-                circular
-                onClick= {(ev, data) => this.props.openCreateModal(true)}
-              >CREATE</Button>
-
-              <Button
-                circular
-                onClick= {(ev, data) => this.props.openJoinModal(true)}
-              >JOIN</Button>
-          </Segment>
         </SegmentGroup>
       </div>
     );
