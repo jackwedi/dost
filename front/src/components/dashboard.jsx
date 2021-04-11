@@ -1,9 +1,9 @@
 import WishList from "./wishlist";
 import Groups from "./groups";
 import { Grid } from "semantic-ui-react";
-import BirthdayModal from "./birthdayModal";
-import CreateGroupModal from "./createGroupModal";
-import JoinGroupModal from "./joinGroupModal";
+import BirthdayModal from "./modals/birthdayModal.jsx";
+import CreateGroupModal from "./modals/createGroupModal.jsx";
+import JoinGroupModal from "./modals/joinGroupModal.jsx";
 
 function Dashboard(props) {
   return (

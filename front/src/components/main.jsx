@@ -119,6 +119,10 @@ class Main extends React.Component {
     this.setState({ joinGroupModelOpen: value });
   }
 
+  setWishModalVisible(value) {
+    this.setState({ wishModelOpen: value });
+  }
+
   async createUser(dateOfBirth) {
     // Only when entered Date
     console.log("NEW USER");
@@ -178,15 +182,10 @@ class Main extends React.Component {
     return request.data;
   }
 
-  componentDidMount() {
-    // this.myTween = Tween.to(this.arrowIcon, 1, {x: 100, y: 100});
-  }
-
   render() {
-    // return this.state.isLogged ? this.loggedUI() : this.notLoggedUI();
     const menuButton = !this.state.isLogged ? 
-    (<LoginButton onSuccess={this.handleLogin.bind(this)}  onFailure={this.handleFailing.bind(this)}/>) : 
-    (<LogoutButton onSuccess={this.handleLogout.bind(this)}  onFailure={this.handleFailing.bind(this)}/>);
+      (<LoginButton onSuccess={this.handleLogin.bind(this)}  onFailure={this.handleFailing.bind(this)}/>) : 
+      (<LogoutButton onSuccess={this.handleLogout.bind(this)}  onFailure={this.handleFailing.bind(this)}/>);
 
     const body = this.state.isLogged ? (
       <Dashboard
@@ -208,14 +207,6 @@ class Main extends React.Component {
           <Grid.Column width >
             <Header content=" LOGIN with GOOGLE to access DOST"/>
 
-          </Grid.Column>
-          <Grid.Column width ={1} floated='right'>
-            {/* <Tween from= {{  rotation: 180, y: 0 }} to={{  rotation: 180, y: (- 0.5 + "em")  }} duration={1}  repeat={-1} yoyo>
-              <div >
-                <Icon name="arrow down" key="arrowIcon"></Icon>
-              </div>
-
-            </Tween> */}
           </Grid.Column>
             </Grid.Row>
         </Grid>
