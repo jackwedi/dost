@@ -4,7 +4,7 @@ import Dashboard from "./dashboard";
 import { Container, Header, Menu, Grid, Icon } from "semantic-ui-react";
 import LogoutButton from "./logoutButton";
 import LoginButton from "./loginButton";
-import { Tween } from 'react-gsap';
+import { Tween } from "react-gsap";
 
 class Main extends React.Component {
   constructor(props) {
@@ -35,17 +35,23 @@ class Main extends React.Component {
 
   async updateGroupDatas() {
     let groupsRequestData = (
-      await axios.get(`http://localhost:1337/group/user/${this.state.currentUser._id}`)
+      await axios.get(
+        `http://localhost:1337/group/user/${this.state.currentUser._id}`
+      )
     ).data;
 
     if (!groupsRequestData) {
-      console.log("NO GROUPS")
+      console.log("NO GROUPS");
       return;
-    };
+    }
 
     let groups = [];
     for (let group of groupsRequestData) {
-      let groupFormatted = { pseudo: group.pseudo, members: [], sharedId: group.sharedId };
+      let groupFormatted = {
+        pseudo: group.pseudo,
+        members: [],
+        sharedId: group.sharedId,
+      };
       const promises = group.users.map((member) => {
         return axios.get(`http://localhost:1337/user/objectID/${member}`);
       });
@@ -67,17 +73,19 @@ class Main extends React.Component {
     ).data;
 
     if (user) {
-      this.setState({         
-        wishList: user.wishList,
-        dateOfBirth: user.dateOfBirth,
-        currentUser: user
-      }, async () => {
-        await this.updateGroupDatas();
-      });
+      this.setState(
+        {
+          wishList: user.wishList,
+          dateOfBirth: user.dateOfBirth,
+          currentUser: user,
+        },
+        async () => {
+          await this.updateGroupDatas();
+        }
+      );
     } else {
       this.setState({ firstLog: true, birthdayModelOpen: true });
     }
-
   }
 
   async addItemToWishList(value) {
@@ -126,118 +134,123 @@ class Main extends React.Component {
   async createUser(dateOfBirth) {
     // Only when entered Date
     console.log("NEW USER");
-    await axios.post(
-      `http://localhost:1337/user`,
-      {
-        googleID: this.state.googleId,
-        name: this.state.givenName,
-        dateOfBirth
-      }
-    );
+    await axios.post(`http://localhost:1337/user`, {
+      googleID: this.state.googleId,
+      name: this.state.givenName,
+      dateOfBirth,
+    });
 
     await this.updateUserDatas();
-    this.setState({birthdayModelOpen: false})
+    this.setState({ birthdayModelOpen: false });
   }
 
   async createGroup(group) {
-    const createGroup = await axios.post(
-      `http://localhost:1337/group/create`,
-      {
-        pseudo: group
-      }
-    );
+    const createGroup = await axios.post(`http://localhost:1337/group/create`, {
+      pseudo: group,
+    });
 
-    await axios.post(`http://localhost:1337/group/join`,  
-    {
+    await axios.post(`http://localhost:1337/group/join`, {
       sharedId: createGroup.data.sharedId,
-      userId: this.state.currentUser._id
-
+      userId: this.state.currentUser._id,
     });
 
     await this.updateGroupDatas();
-    this.setState({createGroupModelOpen: false})
-
+    this.setState({ createGroupModelOpen: false });
   }
 
   async joinGroup(group) {
-    if (this.state.groups.filter((group) => group.sharedId === group).length > 0) {
+    if (
+      this.state.groups.filter((group) => group.sharedId === group).length > 0
+    ) {
       console.log("ALREADY IN GROUP");
       return;
     }
 
-    await axios.post(`http://localhost:1337/group/join`,
-    {
+    await axios.post(`http://localhost:1337/group/join`, {
       sharedId: group,
-      userId: this.state.currentUser._id
-
+      userId: this.state.currentUser._id,
     });
-    
-    await this.updateGroupDatas();
-    this.setState({joinGroupModelOpen: false})
 
+    await this.updateGroupDatas();
+    this.setState({ joinGroupModelOpen: false });
   }
 
   async groupExists(groupId) {
-    const request = await axios.get(`http://localhost:1337/group/${groupId.replace("#", "~")}`);
+    const request = await axios.get(
+      `http://localhost:1337/group/${groupId.replace("#", "~")}`
+    );
     return request.data;
   }
 
   render() {
-    const menuButton = !this.state.isLogged ? 
-      (<LoginButton onSuccess={this.handleLogin.bind(this)}  onFailure={this.handleFailing.bind(this)}/>) : 
-      (<LogoutButton onSuccess={this.handleLogout.bind(this)}  onFailure={this.handleFailing.bind(this)}/>);
+    const menuButton = !this.state.isLogged ? (
+      <LoginButton
+        onSuccess={this.handleLogin.bind(this)}
+        onFailure={this.handleFailing.bind(this)}
+      />
+    ) : (
+      <LogoutButton
+        onSuccess={this.handleLogout.bind(this)}
+        onFailure={this.handleFailing.bind(this)}
+      />
+    );
 
     const body = this.state.isLogged ? (
       <Dashboard
         data={this.state}
-        setDOBModalVisible= { this.setDOBModalVisible.bind(this)}
-        createUser = {this.createUser.bind(this)}
-        addItemToWishList = {this.addItemToWishList.bind(this)}
-        removeItemToWishList = {this.removeItemToWishList.bind(this)}
-        setJoinGroupModalVisible = {this.setJoinGroupModalVisible.bind(this)}
-        joinGroup = {this.joinGroup.bind(this)}
-        setCreateGroupModalVisible = {this.setCreateGroupModalVisible.bind(this)}
-        createGroup = {this.createGroup.bind(this)}
-        updateGroupDatas = {this.updateGroupDatas.bind(this)}
-      />)
-    : (
-      <header className="App-header" style={{"padding-top": 4.5 + "em"}}>
+        setDOBModalVisible={this.setDOBModalVisible.bind(this)}
+        createUser={this.createUser.bind(this)}
+        addItemToWishList={this.addItemToWishList.bind(this)}
+        removeItemToWishList={this.removeItemToWishList.bind(this)}
+        setJoinGroupModalVisible={this.setJoinGroupModalVisible.bind(this)}
+        joinGroup={this.joinGroup.bind(this)}
+        setCreateGroupModalVisible={this.setCreateGroupModalVisible.bind(this)}
+        createGroup={this.createGroup.bind(this)}
+        updateGroupDatas={this.updateGroupDatas.bind(this)}
+      />
+    ) : (
+      <header className="App-header" style={{ "padding-top": 4.5 + "em" }}>
         <Grid inverted>
           <Grid.Row columns={"equal"}>
-          <Grid.Column width >
-            <Header content=" LOGIN with GOOGLE to access DOST"/>
-
-          </Grid.Column>
-            </Grid.Row>
+            <Grid.Column width>
+              <Header content=" LOGIN with GOOGLE to access DOST" />
+            </Grid.Column>
+          </Grid.Row>
         </Grid>
       </header>
     );
 
-  
     return (
-      <div className="App" >
-        <Menu inverted fixed='top' pointing>
-          <Menu.Item>
-              DOST
-          </Menu.Item>  
-          <Menu.Item position='right'>
-            {menuButton}
-          </Menu.Item>
+      <div className="App">
+        <Menu inverted fixed="top" pointing>
+          <Menu.Item>DOST</Menu.Item>
+          <Menu.Item position="right">{menuButton}</Menu.Item>
         </Menu>
-        {!this.state.isLogged && 
-          <Container style={{"padding-top": 6.5 + "em"}} textAlign='right' fluid>
-            <Tween from= {{x: (- 0.5 + "em"), y: 0 }} to={{x: (- 0.5 + "em"),   y: (- 0.5 + "em")  }} duration={1}  repeat={-1} yoyo>
-                <div >
-                  <Icon name="arrow down" key="arrowIcon"  flipped ='vertically' size='huge'></Icon>
-                </div>
+        {!this.state.isLogged && (
+          <Container
+            style={{ "padding-top": 6.5 + "em" }}
+            textAlign="right"
+            fluid
+          >
+            <Tween
+              from={{ x: -0.5 + "em", y: 0 }}
+              to={{ x: -0.5 + "em", y: -0.5 + "em" }}
+              duration={1}
+              repeat={-1}
+              yoyo
+            >
+              <div>
+                <Icon
+                  name="arrow down"
+                  key="arrowIcon"
+                  flipped="vertically"
+                  size="huge"
+                ></Icon>
+              </div>
             </Tween>
           </Container>
-        }
-        <Container>
-
-        {body}
-        </Container>
-
+        )}
+        <Container>{body}</Container>
       </div>
     );
   }

@@ -80,7 +80,7 @@ class Wishlist extends React.Component {
     return (
       <div>
         <SegmentGroup>
-          <Segment inverted color='pink' tertiary>
+          <Segment inverted color="pink" tertiary>
             <Header>WISHLIST</Header>
           </Segment>
           <Segment>

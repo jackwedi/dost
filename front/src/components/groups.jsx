@@ -20,7 +20,6 @@ class Groups extends React.Component {
   async onSelectGroup(data) {
     await this.props.updateUI();
     this.setState({ selectedGroupIndex: data.value });
-
   }
 
   sortByNextDate(tab) {
@@ -50,13 +49,16 @@ class Groups extends React.Component {
     const today = new Date(Date.now());
     const monthOffset = 1;
 
-    return (today.getFullYear() === date.getFullYear()) && ((today.getMonth() + monthOffset) - date.getMonth() <= 1 )
+    return (
+      today.getFullYear() === date.getFullYear() &&
+      today.getMonth() + monthOffset - date.getMonth() <= 1
+    );
   }
 
   groupSelectionElement(groups) {
     return (
       <Segment secondary>
-        <Grid columns='equal' verticalAlign='middle'>
+        <Grid columns="equal" verticalAlign="middle">
           <Grid.Row centered>
             <Select
               placeholder="Select your group"
@@ -65,13 +67,15 @@ class Groups extends React.Component {
             />
           </Grid.Row>
           <Grid.Row centered>
-            {this.state.selectedGroupIndex !== null &&
+            {this.state.selectedGroupIndex !== null && (
               <Card
-              header={this.props.list[this.state.selectedGroupIndex]?.pseudo} 
-              description={`${this.props.list[this.state.selectedGroupIndex]?.members.length} members`}
-              meta={this.props.list[this.state.selectedGroupIndex]?.sharedId}
+                header={this.props.list[this.state.selectedGroupIndex]?.pseudo}
+                description={`${
+                  this.props.list[this.state.selectedGroupIndex]?.members.length
+                } members`}
+                meta={this.props.list[this.state.selectedGroupIndex]?.sharedId}
               />
-            }
+            )}
           </Grid.Row>
         </Grid>
         {this.membersSegments()}
@@ -84,7 +88,7 @@ class Groups extends React.Component {
 
     if (this.props.list && this.state.selectedGroupIndex !== null) {
       // Removes the current User
-      let members = this.props.list[this.state.selectedGroupIndex].members
+      let members = this.props.list[this.state.selectedGroupIndex].members;
       // .filter((user) => user.googleID !== this.props.currentUser.googleID);
       // Sorting
       members = this.sortByNextDate(members);
@@ -95,19 +99,24 @@ class Groups extends React.Component {
           <Item key={index}>
             <Item.Content>
               <Item.Header>{member.name}</Item.Header>
-              <Item.Meta >
+              <Item.Meta>
                 <span className="price">
-                  {new Date(member.dateOfBirth).toLocaleDateString("en-GB", {weekday: "long", day:"numeric", month: "long"})} 
+                  {new Date(member.dateOfBirth).toLocaleDateString("en-GB", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                  })}
                 </span>
-              { this.upcomingDate(member.dateOfBirth)  &&  
-                <Icon color="teal" loading name='certificate' />
-              }
+                {this.upcomingDate(member.dateOfBirth) && (
+                  <Icon color="teal" loading name="certificate" />
+                )}
               </Item.Meta>
 
               <Item.Description>
-                {member.wishList.length ? `Wishlist : ${member.wishList.join(", ")}` : `No wishes 😑`}
+                {member.wishList.length
+                  ? `Wishlist : ${member.wishList.join(", ")}`
+                  : `No wishes 😑`}
               </Item.Description>
-
             </Item.Content>
           </Item>
         );
@@ -131,35 +140,33 @@ class Groups extends React.Component {
     return (
       <div>
         <SegmentGroup>
-          <Segment inverted color='teal' tertiary>
+          <Segment inverted color="teal" tertiary>
             <Grid>
-              <Grid.Column verticalAlign='middle' width='2' >
-                <Header inverted content='GROUPS' ></Header>
+              <Grid.Column verticalAlign="middle" width="2">
+                <Header inverted content="GROUPS"></Header>
               </Grid.Column>
-              <Grid.Column width='14'>
-                  <Button
-                    inverted
-                    floated='right'
-                    circular
-                    onClick= {(ev, data) => this.props.openJoinModal(true)}
-                    content='JOIN'
-                  />
+              <Grid.Column width="14">
+                <Button
+                  inverted
+                  floated="right"
+                  circular
+                  onClick={(ev, data) => this.props.openJoinModal(true)}
+                  content="JOIN"
+                />
 
-              <Button
-                inverted
-                floated='right'
-                circular
-                onClick= {(ev, data) => this.props.openCreateModal(true)}
-                content='CREATE'
-              />
-
+                <Button
+                  inverted
+                  floated="right"
+                  circular
+                  onClick={(ev, data) => this.props.openCreateModal(true)}
+                  content="CREATE"
+                />
               </Grid.Column>
             </Grid>
           </Segment>
-          {this.props?.list?.length > 0 && 
-            this.props.list && this.groupSelectionElement(groups)
-            
-          }
+          {this.props?.list?.length > 0 &&
+            this.props.list &&
+            this.groupSelectionElement(groups)}
         </SegmentGroup>
       </div>
     );

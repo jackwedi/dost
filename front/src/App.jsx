@@ -1,10 +1,8 @@
-import './App.css';
-import Main from './components/main.jsx';
+import "./App.css";
+import Main from "./components/main.jsx";
 
 function App() {
-  return (
-    <Main/>
-  );
+  return <Main />;
 }
 
 export default App;

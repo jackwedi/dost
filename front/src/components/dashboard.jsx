@@ -7,11 +7,14 @@ import JoinGroupModal from "./modals/joinGroupModal.jsx";
 
 function Dashboard(props) {
   return (
-    <Grid centered padded='vertically' style={{"padding-top": 4.5 + "em"}}> 
-
+    <Grid centered padded="vertically" style={{ "padding-top": 4.5 + "em" }}>
       <Grid.Row>
-        <Grid.Column >
-          <BirthdayModal modalOpen={props.data.birthdayModelOpen} onModalStateChange={props.setDOBModalVisible} onConfirm={props.createUser}></BirthdayModal>
+        <Grid.Column>
+          <BirthdayModal
+            modalOpen={props.data.birthdayModelOpen}
+            onModalStateChange={props.setDOBModalVisible}
+            onConfirm={props.createUser}
+          ></BirthdayModal>
           <WishList
             list={props.data.wishList}
             addItem={props.addItemToWishList}
@@ -21,9 +24,17 @@ function Dashboard(props) {
       </Grid.Row>
 
       <Grid.Row>
-        <Grid.Column >
-          <JoinGroupModal modalOpen={props.data.joinGroupModelOpen} onModalStateChange={props.setJoinGroupModalVisible} onConfirm={props.joinGroup}></JoinGroupModal>
-          <CreateGroupModal modalOpen={props.data.createGroupModelOpen} onModalStateChange={props.setCreateGroupModalVisible} onConfirm={props.createGroup}></CreateGroupModal>
+        <Grid.Column>
+          <JoinGroupModal
+            modalOpen={props.data.joinGroupModelOpen}
+            onModalStateChange={props.setJoinGroupModalVisible}
+            onConfirm={props.joinGroup}
+          ></JoinGroupModal>
+          <CreateGroupModal
+            modalOpen={props.data.createGroupModelOpen}
+            onModalStateChange={props.setCreateGroupModalVisible}
+            onConfirm={props.createGroup}
+          ></CreateGroupModal>
           <Groups
             list={props.data.groups}
             currentUser={props.data.currentUser}
@@ -33,7 +44,6 @@ function Dashboard(props) {
           ></Groups>
         </Grid.Column>
       </Grid.Row>
-
     </Grid>
   );
 }
