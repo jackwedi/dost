@@ -1,119 +1,82 @@
-import {
-  Input,
-  Label,
-  Dimmer,
-  Loader,
-  Segment,
-  SegmentGroup,
-  Button,
-  Table,
-  Header,
-} from "semantic-ui-react";
+import { Grid, Segment, SegmentGroup, Button, Table, Header, Icon } from "semantic-ui-react";
 import React from "react";
-import axios from "axios";
 
 class Wishlist extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLogged: false,
-      validInput: true,
-      inputItem: null,
-      checkingWord: false,
-    };
-  }
+	constructor(props) {
+		super(props);
+		this.state = {
+			isLogged: false,
+			validInput: true,
+			inputItem: null,
+			checkingWord: false,
+		};
+	}
 
-  async checkItem() {
-    // Check if a word https://api.dictionaryapi.dev/api/v2/entries/en_US/hello
-    if (!this.state.inputItem) return;
-    try {
-      this.setState({ checkingWord: true });
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          resolve();
-        }, 1000)
-      );
-      await axios.get(
-        `https://api.dictionaryapi.dev/api/v2/entries/en_US/${this.state.inputItem}`
-      );
-    } catch (e) {
-      console.log("bad word");
-      this.setState({ validInput: false, checkingWord: false });
-      return;
-    } finally {
-      this.setState({ checkingWord: false });
-    }
-    this.setState({ validInput: true });
-    this.props.addItem(this.state.inputItem);
-  }
+	onInputChange(value) {
+		this.setState({ inputItem: value, validInput: true });
+	}
 
-  onInputChange(value) {
-    this.setState({ inputItem: value, validInput: true });
-  }
+	onRemoveItem(value) {
+		this.props.removeItem(this.props.list[value]._id);
+	}
 
-  onRemoveItem(value) {
-    this.props.removeItem(this.props.list[value]);
-  }
+	render() {
+		let segments;
+		if (this.props.list) {
+			segments = this.props.list.map((wish, index) => {
+				return (
+					<Table.Row key={index}>
+						<Table.Cell>{wish.item}</Table.Cell>
+						<Table.Cell>
+							{wish.url && (
+								<a href={wish.url} target="_blank">
+									<Icon link name="linkify"></Icon>
+								</a>
+							)}
+						</Table.Cell>
+						<Table.Cell collapsing>
+							<Button
+								size="tiny"
+								inverted
+								color="red"
+								icon="remove"
+								circular
+								onClick={(ev, data) => this.onRemoveItem(index)}
+							></Button>
+						</Table.Cell>
+					</Table.Row>
+				);
+			});
+		}
 
-  render() {
-    let segments;
-    if (this.props.list) {
-      segments = this.props.list.map((item, index) => {
-        return (
-          <Table.Row key={index}>
-            <Table.Cell collapsing>
-              <Button
-                size="tiny"
-                inverted
-                color="red"
-                icon="remove"
-                circular
-                onClick={(ev, data) => this.onRemoveItem(index)}
-              ></Button>
-            </Table.Cell>
-            <Table.Cell>{item}</Table.Cell>
-          </Table.Row>
-        );
-      });
-    }
-
-    return (
-      <div>
-        <SegmentGroup>
-          <Segment inverted color="pink" tertiary>
-            <Header>WISHLIST</Header>
-          </Segment>
-          <Segment>
-            <Table>
-              <Table.Body>{segments}</Table.Body>
-            </Table>
-          </Segment>
-          <Segment>
-            {this.state.checkingWord && (
-              <Dimmer active>
-                <Loader> Adding </Loader>
-              </Dimmer>
-            )}
-
-            <Input
-              placeholder="Add wish..."
-              onChange={(ev, data) => this.onInputChange(data.value)}
-              action={{
-                onClick: () => this.checkItem(),
-                color: this.state.validInput ? "teal" : "red",
-                icon: "plus",
-              }}
-            ></Input>
-          </Segment>
-        </SegmentGroup>
-        {!this.state.validInput && (
-          <Label color="red" pointing>
-            👺 Not a word 👺
-          </Label>
-        )}
-      </div>
-    );
-  }
+		return (
+			<div>
+				<SegmentGroup>
+					<Segment inverted color="green" tertiary>
+						<Grid>
+							<Grid.Column verticalAlign="middle" width="2">
+								<Header inverted content="WISHLIST"></Header>
+							</Grid.Column>
+							<Grid.Column width="14">
+								<Button
+									inverted
+									floated="right"
+									circular
+									onClick={(ev, data) => this.props.openWishModal(true)}
+									content="ADD"
+								/>
+							</Grid.Column>
+						</Grid>
+					</Segment>
+					<Segment secondary>
+						<Table textAlign="left" size="small" unstackable>
+							<Table.Body>{segments}</Table.Body>
+						</Table>
+					</Segment>
+				</SegmentGroup>
+			</div>
+		);
+	}
 }
 
 export default Wishlist;
