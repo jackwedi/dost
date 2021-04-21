@@ -1,10 +1,15 @@
 import React from "react";
 import axios from "axios";
-import Dashboard from "./dashboard";
-import { Container, Header, Menu, Grid, Icon } from "semantic-ui-react";
+import { Container, Menu, Grid, Icon, Image } from "semantic-ui-react";
 import LogoutButton from "./logoutButton";
 import LoginButton from "./loginButton";
 import { Tween } from "react-gsap";
+import { Route, Link, Switch } from "react-router-dom";
+
+import Logo from "../logo.svg";
+
+import GroupWindow from "./groupWindow";
+import WishWindow from "./wishWindow";
 
 class Main extends React.Component {
 	constructor(props) {
@@ -34,9 +39,7 @@ class Main extends React.Component {
 	}
 
 	async updateGroupDatas() {
-		let groupsRequestData = (
-			await axios.get(`http://localhost:1337/group/user/${this.state.currentUser._id}`)
-		).data;
+		let groupsRequestData = (await axios.get(`http://localhost:1337/group/user/${this.state.currentUser._id}`)).data;
 
 		if (!groupsRequestData) {
 			console.log("NO GROUPS");
@@ -97,11 +100,7 @@ class Main extends React.Component {
 	}
 
 	async removeItemFromWishList(value) {
-		let request = (
-			await axios.post(
-				`http://localhost:1337/user/removewish/${this.state.googleId}/${value}`
-			)
-		).data;
+		let request = (await axios.post(`http://localhost:1337/user/removewish/${this.state.googleId}/${value}`)).data;
 		this.setState({ wishList: request.wishList });
 	}
 
@@ -177,72 +176,72 @@ class Main extends React.Component {
 		return request.data;
 	}
 
+	handleMenuItemClick(e, { name }) {
+		this.setState({ activeMenuItem: name });
+		console.log(name);
+	}
+
 	render() {
 		const menuButton = !this.state.isLogged ? (
-			<LoginButton
-				onSuccess={this.handleLogin.bind(this)}
-				onFailure={this.handleFailing.bind(this)}
-			/>
+			<LoginButton onSuccess={this.handleLogin.bind(this)} onFailure={this.handleFailing.bind(this)} />
 		) : (
-			<LogoutButton
-				onSuccess={this.handleLogout.bind(this)}
-				onFailure={this.handleFailing.bind(this)}
-			/>
-		);
-
-		const body = this.state.isLogged ? (
-			<Dashboard
-				data={this.state}
-				setDOBModalVisible={this.setDOBModalVisible.bind(this)}
-				setJoinGroupModalVisible={this.setJoinGroupModalVisible.bind(this)}
-				setCreateGroupModalVisible={this.setCreateGroupModalVisible.bind(this)}
-				setWishModalVisible={this.setWishModalVisible.bind(this)}
-				createUser={this.createUser.bind(this)}
-				addItemToWishList={this.addItemToWishList.bind(this)}
-				removeItemFromWishList={this.removeItemFromWishList.bind(this)}
-				joinGroup={this.joinGroup.bind(this)}
-				createGroup={this.createGroup.bind(this)}
-				updateGroupDatas={this.updateGroupDatas.bind(this)}
-			/>
-		) : (
-			<header className="App-header">
-				<Grid inverted>
-					<Grid.Row columns={"equal"}>
-						<Grid.Column>
-							<Header content=" LOGIN with GOOGLE to access DOST" />
-						</Grid.Column>
-					</Grid.Row>
-				</Grid>
-			</header>
+			<LogoutButton onSuccess={this.handleLogout.bind(this)} onFailure={this.handleFailing.bind(this)} />
 		);
 
 		return (
 			<div className="App">
-				<Menu inverted fixed="top" pointing>
-					<Menu.Item>DOST</Menu.Item>
-					<Menu.Item position="right">{menuButton}</Menu.Item>
-				</Menu>
-				{!this.state.isLogged && (
-					<Container style={{ paddingTop: 6.5 + "em" }} textAlign="right" fluid>
-						<Tween
-							from={{ x: -0.5 + "em", y: 0 }}
-							to={{ x: -0.5 + "em", y: -0.5 + "em" }}
-							duration={1}
-							repeat={-1}
-							yoyo
-						>
-							<div>
-								<Icon
-									name="arrow down"
-									key="arrowIcon"
-									flipped="vertically"
-									size="huge"
-								></Icon>
-							</div>
-						</Tween>
-					</Container>
-				)}
-				<Container>{body}</Container>
+				<Container>
+					<Menu fixed="top" inverted borderless>
+						<Menu.Item as={Link} to="/" name="DOST" onClick={this.handleMenuItemClick.bind(this)}>
+							<img src={Logo}></img>
+						</Menu.Item>
+						<Menu.Item
+							as={Link}
+							to="/wishlist"
+							name="wishlist"
+							active={this.state.activeMenuItem === "wishlist"}
+							onClick={this.handleMenuItemClick.bind(this)}
+						/>
+						<Menu.Item
+							as={Link}
+							to="/groups"
+							name="groups"
+							active={this.state.activeMenuItem === "groups"}
+							onClick={this.handleMenuItemClick.bind(this)}
+						/>
+						<Menu.Item position="right">{menuButton}</Menu.Item>
+					</Menu>
+				</Container>
+				<Container>
+					<Grid centered padded="vertically" style={{ "padding-top": 4.5 + "em" }}>
+						<Grid.Row>
+							<Grid.Column>
+								{this.state.isLogged && (
+									<Switch>
+										<Route path="/groups">
+											<GroupWindow
+												data={this.state}
+												setJoinGroupModalVisible={this.setJoinGroupModalVisible.bind(this)}
+												setCreateGroupModalVisible={this.setCreateGroupModalVisible.bind(this)}
+												joinGroup={this.joinGroup.bind(this)}
+												createGroup={this.createGroup.bind(this)}
+												updateGroupDatas={this.updateGroupDatas.bind(this)}
+											/>
+										</Route>
+										<Route path="/wishlist">
+											<WishWindow
+												data={this.state}
+												setWishModalVisible={this.setWishModalVisible.bind(this)}
+												addItemToWishList={this.addItemToWishList.bind(this)}
+												removeItemFromWishList={this.removeItemFromWishList.bind(this)}
+											/>
+										</Route>
+									</Switch>
+								)}
+							</Grid.Column>
+						</Grid.Row>
+					</Grid>
+				</Container>
 			</div>
 		);
 	}
