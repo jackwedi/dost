@@ -29,20 +29,13 @@ class Wishlist extends React.Component {
 						<Table.Cell>{wish.item}</Table.Cell>
 						<Table.Cell>
 							{wish.url && (
-								<a href={wish.url} target="_blank">
+								<a href={wish.url} target="_blank" rel="noreferrer">
 									<Icon link name="linkify"></Icon>
 								</a>
 							)}
 						</Table.Cell>
 						<Table.Cell collapsing>
-							<Button
-								size="tiny"
-								inverted
-								color="red"
-								icon="remove"
-								circular
-								onClick={(ev, data) => this.onRemoveItem(index)}
-							></Button>
+							<Button size="tiny" inverted color="red" icon="remove" circular onClick={(ev, data) => this.onRemoveItem(index)}></Button>
 						</Table.Cell>
 					</Table.Row>
 				);
@@ -58,13 +51,7 @@ class Wishlist extends React.Component {
 								<Header inverted content="WISHLIST"></Header>
 							</Grid.Column>
 							<Grid.Column width="14">
-								<Button
-									inverted
-									floated="right"
-									circular
-									onClick={(ev, data) => this.props.openWishModal(true)}
-									content="ADD"
-								/>
+								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openWishModal(true)} content="ADD" />
 							</Grid.Column>
 						</Grid>
 					</Segment>

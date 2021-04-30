@@ -1,7 +1,6 @@
 import "./App.css";
 import Main from "./components/main.jsx";
-import { Route, BrowserRouter as Router, Link, Switch, Home } from "react-router-dom";
-import Groups from "./components/groups";
+import { BrowserRouter as Router } from "react-router-dom";
 
 function App() {
 	return (

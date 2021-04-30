@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const User = require("../models/user.model").User;
+const Group = require("../models/group.model");
 
 router.route("/:googleId").get(async (req, res) => {
 	const user = await User.findOne({
@@ -69,5 +70,57 @@ router.route("/").post(async (req, res) => {
 		}
 	);
 });
+
+router.route("/upcomingevents/:userId").get(async (req, res) => {
+	try {
+		const groups = await Group.find({ users: req.params.userId });
+
+		const friends = groups.map((group) => group.users.map((userId) => userId.toString())).flat();
+		const uniqueFriends = friends.filter((value, index, self) => {
+			return self.indexOf(value) === index;
+		});
+
+		let resList = await User.find({ _id: { $in: uniqueFriends } });
+
+		resList = resList.filter((user) => {
+			return upcomingDate(user.dateOfBirth);
+		});
+		console.log(resList);
+
+		return res.send(sortByNextDate(resList));
+	} catch (e) {
+		console.log(e);
+	}
+});
+
+const upcomingDate = (rawDate) => {
+	const today = new Date(Date.now());
+	const testDate = new Date(rawDate);
+	const monthOffset = 12;
+	return testDate.getMonth() - today.getMonth() <= monthOffset;
+};
+
+const sortByNextDate = (tab) => {
+	return (
+		tab
+			// Add 1 year to the already passed birthday of this year
+			// .map((member) => {
+			// 	let tempMember = { ...member };
+			// 	console.log(tempMember);
+			// 	let birthday = new Date(member.dateOfBirth);
+			// 	let today = new Date(Date.now());
+
+			// 	let computedBirthday = birthday.getDate() + birthday.getMonth() * 30;
+			// 	let computedToday = today.getDate() + today.getMonth() * 30;
+			// 	if (computedBirthday - computedToday < 0) {
+			// 		birthday = new Date(birthday.setFullYear(today.getFullYear() + 1));
+			// 	}
+			// 	// tempMember.dateOfBirth = birthday;
+			// 	return tempMember;
+			// })
+			// Sort by next birthdates
+			.sort((a, b) => new Date(a.dateOfBirth) - new Date(b.dateOfBirth))
+	);
+};
 
 module.exports = router;

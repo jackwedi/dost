@@ -1,16 +1,5 @@
 import React from "react";
-import {
-	Segment,
-	SegmentGroup,
-	Select,
-	Item,
-	Icon,
-	Button,
-	Header,
-	Card,
-	Grid,
-	List,
-} from "semantic-ui-react";
+import { Segment, SegmentGroup, Select, Item, Icon, Button, Header, Card, Grid, List } from "semantic-ui-react";
 
 class Groups extends React.Component {
 	constructor(props) {
@@ -50,10 +39,7 @@ class Groups extends React.Component {
 		const today = new Date(Date.now());
 		const monthOffset = 1;
 
-		return (
-			today.getFullYear() === date.getFullYear() &&
-			today.getMonth() + monthOffset - date.getMonth() <= 1
-		);
+		return today.getFullYear() === date.getFullYear() && today.getMonth() + monthOffset - date.getMonth() <= 1;
 	}
 
 	groupSelectionElement(groups) {
@@ -61,19 +47,13 @@ class Groups extends React.Component {
 			<Segment secondary>
 				<Grid columns="equal" verticalAlign="middle">
 					<Grid.Row centered>
-						<Select
-							placeholder="Select your group"
-							options={groups}
-							onChange={(ev, data) => this.onSelectGroup(data)}
-						/>
+						<Select placeholder="Select your group" options={groups} onChange={(ev, data) => this.onSelectGroup(data)} />
 					</Grid.Row>
 					<Grid.Row centered>
 						{this.state.selectedGroupIndex !== null && (
 							<Card
 								header={this.props.list[this.state.selectedGroupIndex]?.pseudo}
-								description={`${
-									this.props.list[this.state.selectedGroupIndex]?.members.length
-								} members`}
+								description={`${this.props.list[this.state.selectedGroupIndex]?.members.length} members`}
 								meta={this.props.list[this.state.selectedGroupIndex]?.sharedId}
 							/>
 						)}
@@ -96,29 +76,26 @@ class Groups extends React.Component {
 
 			// UI
 			members = members.map((member, index) => {
-				let wishes = member.wishList.map((wish, index) => {
+				let wishes = member.wishList.map((wish, index2) => {
 					return (
-						<List.Item href={wish.url} target="_blank">
+						<List.Item href={wish.url} target="_blank" key={index2}>
 							{wish.item} <Icon name={wish.url ? "linkify" : ""}></Icon>
 						</List.Item>
 					);
 				});
-				console.log(wishes);
+
 				return (
-					<Item key={index}>
+					<Item key={member._id}>
 						<Item.Content>
 							<Item.Header>{member.name}</Item.Header>
 							<Item.Meta>
 								<span className="price">
 									{new Date(member.dateOfBirth).toLocaleDateString("en-GB", {
-										weekday: "long",
 										day: "numeric",
 										month: "long",
 									})}
 								</span>
-								{this.upcomingDate(member.dateOfBirth) && (
-									<Icon color="teal" loading name="certificate" />
-								)}
+								{this.upcomingDate(member.dateOfBirth) && <Icon color="teal" loading name="certificate" />}
 							</Item.Meta>
 							<Item.Description>
 								{wishes.length > 0 && (
@@ -134,7 +111,7 @@ class Groups extends React.Component {
 			});
 
 			segments.push(
-				<Segment>
+				<Segment key="groupSegment">
 					<Item.Group divided>{members}</Item.Group>
 				</Segment>
 			);
@@ -151,33 +128,19 @@ class Groups extends React.Component {
 		return (
 			<div>
 				<SegmentGroup>
-					<Segment inverted color="teal" tertiary>
+					<Segment inverted color="teal" tertiary key={"test"}>
 						<Grid>
 							<Grid.Column verticalAlign="middle" width="2">
 								<Header inverted content="GROUPS"></Header>
 							</Grid.Column>
 							<Grid.Column width="14">
-								<Button
-									inverted
-									floated="right"
-									circular
-									onClick={(ev, data) => this.props.openJoinModal(true)}
-									content="JOIN"
-								/>
+								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openJoinModal(true)} content="JOIN" />
 
-								<Button
-									inverted
-									floated="right"
-									circular
-									onClick={(ev, data) => this.props.openCreateModal(true)}
-									content="CREATE"
-								/>
+								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openCreateModal(true)} content="CREATE" />
 							</Grid.Column>
 						</Grid>
 					</Segment>
-					{this.props?.list?.length > 0 &&
-						this.props.list &&
-						this.groupSelectionElement(groups)}
+					{this.props?.list?.length > 0 && this.props.list && this.groupSelectionElement(groups)}
 				</SegmentGroup>
 			</div>
 		);

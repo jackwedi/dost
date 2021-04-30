@@ -1,15 +1,16 @@
 import React from "react";
 import axios from "axios";
-import { Container, Menu, Grid, Icon, Image } from "semantic-ui-react";
+import { Container, Menu, Grid } from "semantic-ui-react";
 import LogoutButton from "./logoutButton";
 import LoginButton from "./loginButton";
-import { Tween } from "react-gsap";
 import { Route, Link, Switch } from "react-router-dom";
 
 import Logo from "../logo.svg";
 
 import GroupWindow from "./groupWindow";
 import WishWindow from "./wishWindow";
+import Home from "./home";
+import NotConnectedHome from "./notConnectedHome";
 
 class Main extends React.Component {
 	constructor(props) {
@@ -178,7 +179,6 @@ class Main extends React.Component {
 
 	handleMenuItemClick(e, { name }) {
 		this.setState({ activeMenuItem: name });
-		console.log(name);
 	}
 
 	render() {
@@ -193,7 +193,7 @@ class Main extends React.Component {
 				<Container>
 					<Menu fixed="top" inverted borderless>
 						<Menu.Item as={Link} to="/" name="DOST" onClick={this.handleMenuItemClick.bind(this)}>
-							<img src={Logo}></img>
+							<img src={Logo} alt="logo"></img>
 						</Menu.Item>
 						<Menu.Item
 							as={Link}
@@ -213,9 +213,20 @@ class Main extends React.Component {
 					</Menu>
 				</Container>
 				<Container>
-					<Grid centered padded="vertically" style={{ "padding-top": 4.5 + "em" }}>
+					<Grid centered padded="vertically" style={{ paddingTop: 6 + "em" }}>
 						<Grid.Row>
 							<Grid.Column>
+								{!this.state.isLogged && (
+									<Switch>
+										<Route path="/">
+											<NotConnectedHome
+												data={this.state}
+												setDOBModalVisible={this.setDOBModalVisible.bind(this)}
+												createUser={this.createUser.bind(this)}
+											/>
+										</Route>
+									</Switch>
+								)}
 								{this.state.isLogged && (
 									<Switch>
 										<Route path="/groups">
@@ -234,6 +245,13 @@ class Main extends React.Component {
 												setWishModalVisible={this.setWishModalVisible.bind(this)}
 												addItemToWishList={this.addItemToWishList.bind(this)}
 												removeItemFromWishList={this.removeItemFromWishList.bind(this)}
+											/>
+										</Route>
+										<Route path="/">
+											<Home
+												data={this.state}
+												setDOBModalVisible={this.setDOBModalVisible.bind(this)}
+												createUser={this.createUser.bind(this)}
 											/>
 										</Route>
 									</Switch>
