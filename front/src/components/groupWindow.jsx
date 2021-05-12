@@ -1,11 +1,13 @@
 import Groups from "./groups";
-import { Grid } from "semantic-ui-react";
+import { Grid, Header } from "semantic-ui-react";
 import CreateGroupModal from "./modals/createGroupModal.jsx";
 import JoinGroupModal from "./modals/joinGroupModal.jsx";
 
 function GroupWindow(props) {
 	return (
 		<Grid.Row>
+			<Header textAlign="center" size="huge" content={"🤟"} />
+
 			<Grid.Column>
 				<JoinGroupModal
 					modalOpen={props.data.joinGroupModelOpen}

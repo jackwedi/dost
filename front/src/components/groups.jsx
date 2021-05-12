@@ -1,5 +1,6 @@
 import React from "react";
-import { Segment, SegmentGroup, Select, Item, Icon, Button, Header, Card, Grid, List } from "semantic-ui-react";
+import { Segment, SegmentGroup, Select, Button, Header, Grid, Label } from "semantic-ui-react";
+import MemberCard from "./memberCard";
 
 class Groups extends React.Component {
 	constructor(props) {
@@ -42,82 +43,40 @@ class Groups extends React.Component {
 		return today.getFullYear() === date.getFullYear() && today.getMonth() + monthOffset - date.getMonth() <= 1;
 	}
 
-	groupSelectionElement(groups) {
+	groupSelectionElement() {
 		return (
 			<Segment secondary>
-				<Grid columns="equal" verticalAlign="middle">
-					<Grid.Row centered>
-						<Select placeholder="Select your group" options={groups} onChange={(ev, data) => this.onSelectGroup(data)} />
-					</Grid.Row>
-					<Grid.Row centered>
-						{this.state.selectedGroupIndex !== null && (
-							<Card
-								header={this.props.list[this.state.selectedGroupIndex]?.pseudo}
-								description={`${this.props.list[this.state.selectedGroupIndex]?.members.length} members`}
-								meta={this.props.list[this.state.selectedGroupIndex]?.sharedId}
-							/>
-						)}
-					</Grid.Row>
-				</Grid>
+				{this.state.selectedGroupIndex !== null && (
+					<Grid columns="equal" verticalAlign="middle">
+						<Grid.Row centered>
+							<Label circular color="teal" tertiary>
+								<i>{this.props.list[this.state.selectedGroupIndex]?.sharedId}</i>
+							</Label>
+						</Grid.Row>
+					</Grid>
+				)}
 				{this.membersSegments()}
 			</Segment>
 		);
 	}
 
 	membersSegments() {
-		let segments = [];
+		let members;
 
 		if (this.props.list && this.state.selectedGroupIndex !== null) {
 			// Removes the current User
-			let members = this.props.list[this.state.selectedGroupIndex].members;
+			members = this.props.list[this.state.selectedGroupIndex].members;
 			// .filter((user) => user.googleID !== this.props.currentUser.googleID);
 			// Sorting
 			members = this.sortByNextDate(members);
 
 			// UI
 			members = members.map((member, index) => {
-				let wishes = member.wishList.map((wish, index2) => {
-					return (
-						<List.Item href={wish.url} target="_blank" key={index2}>
-							{wish.item} <Icon name={wish.url ? "linkify" : ""}></Icon>
-						</List.Item>
-					);
-				});
-
-				return (
-					<Item key={member._id}>
-						<Item.Content>
-							<Item.Header>{member.name}</Item.Header>
-							<Item.Meta>
-								<span className="price">
-									{new Date(member.dateOfBirth).toLocaleDateString("en-GB", {
-										day: "numeric",
-										month: "long",
-									})}
-								</span>
-								{this.upcomingDate(member.dateOfBirth) && <Icon color="teal" loading name="certificate" />}
-							</Item.Meta>
-							<Item.Description>
-								{wishes.length > 0 && (
-									<List bulleted horizontal>
-										{wishes}
-									</List>
-								)}
-								{wishes.length === 0 && `No wishes 😑`}
-							</Item.Description>
-						</Item.Content>
-					</Item>
-				);
+				return <MemberCard name={member.name} wishList={member.wishList} dateOfBirth={member.dateOfBirth} _id={member._id} />;
 			});
-
-			segments.push(
-				<Segment key="groupSegment">
-					<Item.Group divided>{members}</Item.Group>
-				</Segment>
-			);
 		}
 
-		return segments;
+		return members ?? null;
 	}
 
 	render() {
@@ -129,18 +88,21 @@ class Groups extends React.Component {
 			<div>
 				<SegmentGroup>
 					<Segment inverted color="teal" tertiary key={"test"}>
-						<Grid>
-							<Grid.Column verticalAlign="middle" width="2">
+						<Grid columns="equal">
+							<Grid.Column verticalAlign="middle">
 								<Header inverted content="GROUPS"></Header>
 							</Grid.Column>
-							<Grid.Column width="14">
+							<Grid.Column textAlign="center">
+								<Select floating placeholder="Select your group" options={groups} onChange={(ev, data) => this.onSelectGroup(data)} />
+							</Grid.Column>
+							<Grid.Column>
 								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openJoinModal(true)} content="JOIN" />
-
 								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openCreateModal(true)} content="CREATE" />
 							</Grid.Column>
 						</Grid>
 					</Segment>
-					{this.props?.list?.length > 0 && this.props.list && this.groupSelectionElement(groups)}
+
+					{this.groupSelectionElement()}
 				</SegmentGroup>
 			</div>
 		);

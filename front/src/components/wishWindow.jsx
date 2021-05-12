@@ -1,11 +1,13 @@
 import WishList from "./wishlist";
-import { Grid } from "semantic-ui-react";
+import { Grid, Header } from "semantic-ui-react";
 import BirthdayModal from "./modals/birthdayModal.jsx";
 import WishModal from "./modals/wishModal.jsx";
 
 function WishWindow(props) {
 	return (
 		<Grid.Row>
+			<Header textAlign="center" size="huge" content={"🎁"} />
+
 			<Grid.Column>
 				<BirthdayModal
 					modalOpen={props.data.birthdayModelOpen}

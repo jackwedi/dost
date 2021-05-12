@@ -79,15 +79,22 @@ router.route("/upcomingevents/:userId").get(async (req, res) => {
 		const uniqueFriends = friends.filter((value, index, self) => {
 			return self.indexOf(value) === index;
 		});
+		console.log("U FRIENDS", uniqueFriends);
 
 		let resList = await User.find({ _id: { $in: uniqueFriends } });
 
-		resList = resList.filter((user) => {
+		let test = resList.map((member) => {
+			let { name, dateOfBirth, wishList } = member;
+			return { name, dateOfBirth, wishList };
+		});
+
+		test = test.filter((user) => {
 			return upcomingDate(user.dateOfBirth);
 		});
-		console.log(resList);
-
-		return res.send(sortByNextDate(resList));
+		console.log(test, 1);
+		const sortedDates = sortByNextDate(test);
+		// console.log(sortedDates, 2);
+		return res.send(sortedDates);
 	} catch (e) {
 		console.log(e);
 	}
@@ -96,31 +103,32 @@ router.route("/upcomingevents/:userId").get(async (req, res) => {
 const upcomingDate = (rawDate) => {
 	const today = new Date(Date.now());
 	const testDate = new Date(rawDate);
-	const monthOffset = 12;
-	return testDate.getMonth() - today.getMonth() <= monthOffset;
+	const monthOffset = 4;
+	const diffMonth = testDate.getMonth() - today.getMonth();
+	const diffDay = testDate.getDate() - today.getDate();
+	return diffMonth >= 0 && diffDay >= 0 && diffMonth <= monthOffset;
 };
 
 const sortByNextDate = (tab) => {
-	return (
-		tab
-			// Add 1 year to the already passed birthday of this year
-			// .map((member) => {
-			// 	let tempMember = { ...member };
-			// 	console.log(tempMember);
-			// 	let birthday = new Date(member.dateOfBirth);
-			// 	let today = new Date(Date.now());
+	// Sort by next birthdates
+	let today = new Date(Date.now());
 
-			// 	let computedBirthday = birthday.getDate() + birthday.getMonth() * 30;
-			// 	let computedToday = today.getDate() + today.getMonth() * 30;
-			// 	if (computedBirthday - computedToday < 0) {
-			// 		birthday = new Date(birthday.setFullYear(today.getFullYear() + 1));
-			// 	}
-			// 	// tempMember.dateOfBirth = birthday;
-			// 	return tempMember;
-			// })
-			// Sort by next birthdates
-			.sort((a, b) => new Date(a.dateOfBirth) - new Date(b.dateOfBirth))
-	);
+	return tab.sort((a, b) => {
+		const computedDateA = formatDateToBirthday(a.dateOfBirth, today);
+		const computedDateB = formatDateToBirthday(b.dateOfBirth, today);
+		return computedDateA - computedDateB;
+	});
+};
+
+const formatDateToBirthday = (date, today) => {
+	let birthday = new Date(date);
+	birthday.setFullYear(today.getFullYear());
+	let computedBirthday = date.getDate() + date.getMonth() * 30;
+	if (computedBirthday < today.getDate() + today.getMonth() * 30) {
+		birthday = new Date(birthday.setFullYear(today.getFullYear() + 1));
+	}
+
+	return birthday;
 };
 
 module.exports = router;
