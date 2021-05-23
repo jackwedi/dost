@@ -11,7 +11,8 @@ function MemberCard(props) {
 	let wishes = props.wishList.map((wish, index2) => {
 		return (
 			<List.Item href={wish.url} target="_blank" key={index2}>
-				{wish.item} <Icon name={wish.url ? "linkify" : ""}></Icon>
+				<Icon name={wish.url ? "linkify" : ""}></Icon>
+				{wish.item}
 			</List.Item>
 		);
 	});
@@ -29,7 +30,7 @@ function MemberCard(props) {
 					{upcomingDate(props.dateOfBirth) && <Icon color="teal" loading name="certificate" />}
 				</Card.Meta>
 			</Card.Content>
-			<Card.Content extra>
+			<Card.Content>
 				<List bulleted horizontal>
 					{wishes.length === 0 ? <List.Item>No wishes 😑</List.Item> : wishes}
 				</List>

@@ -49,7 +49,7 @@ class Groups extends React.Component {
 				{this.state.selectedGroupIndex !== null && (
 					<Grid columns="equal" verticalAlign="middle">
 						<Grid.Row centered>
-							<Label circular color="teal" tertiary>
+							<Label circular color="teal">
 								<i>{this.props.list[this.state.selectedGroupIndex]?.sharedId}</i>
 							</Label>
 						</Grid.Row>
@@ -92,14 +92,14 @@ class Groups extends React.Component {
 							<Grid.Column verticalAlign="middle">
 								<Header inverted content="GROUPS"></Header>
 							</Grid.Column>
-							<Grid.Column textAlign="center">
-								<Select floating placeholder="Select your group" options={groups} onChange={(ev, data) => this.onSelectGroup(data)} />
-							</Grid.Column>
 							<Grid.Column>
 								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openJoinModal(true)} content="JOIN" />
 								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openCreateModal(true)} content="CREATE" />
 							</Grid.Column>
 						</Grid>
+					</Segment>
+					<Segment secondary textAlign="center">
+						<Select floating placeholder="Select your group" options={groups} onChange={(ev, data) => this.onSelectGroup(data)} />
 					</Segment>
 
 					{this.groupSelectionElement()}
