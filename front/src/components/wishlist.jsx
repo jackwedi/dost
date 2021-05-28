@@ -1,4 +1,4 @@
-import { Grid, Segment, SegmentGroup, Button, Table, Header, Icon, Card } from "semantic-ui-react";
+import { Grid, Segment, Button, Header, Card } from "semantic-ui-react";
 import React from "react";
 import WishCard from "./wishCard";
 
@@ -45,23 +45,21 @@ class Wishlist extends React.Component {
 		}
 
 		return (
-			<div>
-				<SegmentGroup>
-					<Segment inverted color="green" tertiary>
-						<Grid>
-							<Grid.Column verticalAlign="middle" width="2">
-								<Header inverted content="WISHLIST"></Header>
-							</Grid.Column>
-							<Grid.Column width="14">
-								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openWishModal(true)} content="ADD" />
-							</Grid.Column>
-						</Grid>
-					</Segment>
-					<Segment secondary>
-						<Card.Group>{segments}</Card.Group>
-					</Segment>
-				</SegmentGroup>
-			</div>
+			<Segment.Group>
+				<Segment inverted color="green" tertiary>
+					<Grid>
+						<Grid.Column verticalAlign="middle" width="2">
+							<Header inverted content="WISHLIST"></Header>
+						</Grid.Column>
+						<Grid.Column width="14">
+							<Button inverted floated="right" circular onClick={(ev, data) => this.props.openWishModal(true)} content="ADD" />
+						</Grid.Column>
+					</Grid>
+				</Segment>
+				<Segment secondary>
+					<Card.Group>{segments}</Card.Group>
+				</Segment>
+			</Segment.Group>
 		);
 	}
 }

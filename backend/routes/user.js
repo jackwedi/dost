@@ -73,28 +73,11 @@ router.route("/").post(async (req, res) => {
 
 router.route("/upcomingevents/:userId").get(async (req, res) => {
 	try {
-		const groups = await Group.find({ users: req.params.userId });
-
-		const friends = groups.map((group) => group.users.map((userId) => userId.toString())).flat();
-		const uniqueFriends = friends.filter((value, index, self) => {
-			return self.indexOf(value) === index;
-		});
-		console.log("U FRIENDS", uniqueFriends);
-
-		let resList = await User.find({ _id: { $in: uniqueFriends } });
-
-		let test = resList.map((member) => {
-			let { name, dateOfBirth, wishList } = member;
-			return { name, dateOfBirth, wishList };
-		});
-
-		test = test.filter((user) => {
-			return upcomingDate(user.dateOfBirth);
-		});
-		console.log(test, 1);
-		const sortedDates = sortByNextDate(test);
-		// console.log(sortedDates, 2);
-		return res.send(sortedDates);
+		const groups = await Group.find({ users: req.params.userId }).populate("users");
+		for (const group of groups) {
+			group.users = group.users.filter((user) => upcomingDate(user.dateOfBirth));
+		}
+		return res.send(groups);
 	} catch (e) {
 		console.log(e);
 	}
@@ -103,32 +86,11 @@ router.route("/upcomingevents/:userId").get(async (req, res) => {
 const upcomingDate = (rawDate) => {
 	const today = new Date(Date.now());
 	const testDate = new Date(rawDate);
-	const monthOffset = 4;
+	const monthOffset = 1;
 	const diffMonth = testDate.getMonth() - today.getMonth();
 	const diffDay = testDate.getDate() - today.getDate();
-	return diffMonth >= 0 && diffDay >= 0 && diffMonth <= monthOffset;
-};
 
-const sortByNextDate = (tab) => {
-	// Sort by next birthdates
-	let today = new Date(Date.now());
-
-	return tab.sort((a, b) => {
-		const computedDateA = formatDateToBirthday(a.dateOfBirth, today);
-		const computedDateB = formatDateToBirthday(b.dateOfBirth, today);
-		return computedDateA - computedDateB;
-	});
-};
-
-const formatDateToBirthday = (date, today) => {
-	let birthday = new Date(date);
-	birthday.setFullYear(today.getFullYear());
-	let computedBirthday = date.getDate() + date.getMonth() * 30;
-	if (computedBirthday < today.getDate() + today.getMonth() * 30) {
-		birthday = new Date(birthday.setFullYear(today.getFullYear() + 1));
-	}
-
-	return birthday;
+	return (diffMonth > 0 || (diffMonth === 0 && diffDay >= 0)) && diffMonth <= monthOffset;
 };
 
 module.exports = router;

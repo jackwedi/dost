@@ -1,5 +1,6 @@
 import React from "react";
-import { Segment, SegmentGroup, Select, Button, Header, Grid, Label } from "semantic-ui-react";
+import { Segment, Select, Button, Header, Grid, Label } from "semantic-ui-react";
+import { sortByNextDate } from "../utils/utils";
 import MemberCard from "./memberCard";
 
 class Groups extends React.Component {
@@ -11,36 +12,6 @@ class Groups extends React.Component {
 	async onSelectGroup(data) {
 		await this.props.updateUI();
 		this.setState({ selectedGroupIndex: data.value });
-	}
-
-	sortByNextDate(tab) {
-		return (
-			tab
-				// Add 1 year to the already passed birthday of this year
-				.map((member) => {
-					let tempMember = { ...member };
-					let birthday = new Date(member.dateOfBirth);
-					let today = new Date(Date.now());
-
-					let computedBirthday = birthday.getDate() + birthday.getMonth() * 30;
-					let computedToday = today.getDate() + today.getMonth() * 30;
-					if (computedBirthday - computedToday < 0) {
-						birthday = new Date(birthday.setFullYear(today.getFullYear() + 1));
-					}
-					tempMember.dateOfBirth = birthday;
-					return tempMember;
-				})
-				// Sort by next birthdates
-				.sort((a, b) => new Date(a.dateOfBirth) - new Date(b.dateOfBirth))
-		);
-	}
-
-	upcomingDate(rawDate) {
-		const date = new Date(rawDate);
-		const today = new Date(Date.now());
-		const monthOffset = 1;
-
-		return today.getFullYear() === date.getFullYear() && today.getMonth() + monthOffset - date.getMonth() <= 1;
 	}
 
 	groupSelectionElement() {
@@ -68,7 +39,7 @@ class Groups extends React.Component {
 			members = this.props.list[this.state.selectedGroupIndex].members;
 			// .filter((user) => user.googleID !== this.props.currentUser.googleID);
 			// Sorting
-			members = this.sortByNextDate(members);
+			members = sortByNextDate(members);
 
 			// UI
 			members = members.map((member, index) => {
@@ -85,26 +56,24 @@ class Groups extends React.Component {
 		});
 
 		return (
-			<div>
-				<SegmentGroup>
-					<Segment inverted color="teal" tertiary key={"test"}>
-						<Grid columns="equal">
-							<Grid.Column verticalAlign="middle">
-								<Header inverted content="GROUPS"></Header>
-							</Grid.Column>
-							<Grid.Column>
-								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openJoinModal(true)} content="JOIN" />
-								<Button inverted floated="right" circular onClick={(ev, data) => this.props.openCreateModal(true)} content="CREATE" />
-							</Grid.Column>
-						</Grid>
-					</Segment>
-					<Segment secondary textAlign="center">
-						<Select floating placeholder="Select your group" options={groups} onChange={(ev, data) => this.onSelectGroup(data)} />
-					</Segment>
+			<Segment.Group>
+				<Segment inverted color="teal" tertiary key={"test"}>
+					<Grid columns="equal">
+						<Grid.Column verticalAlign="middle">
+							<Header inverted content="GROUPS"></Header>
+						</Grid.Column>
+						<Grid.Column>
+							<Button inverted floated="right" circular onClick={(ev, data) => this.props.openJoinModal(true)} content="JOIN" />
+							<Button inverted floated="right" circular onClick={(ev, data) => this.props.openCreateModal(true)} content="CREATE" />
+						</Grid.Column>
+					</Grid>
+				</Segment>
+				<Segment secondary textAlign="center">
+					<Select floating placeholder="Select your group" options={groups} onChange={(ev, data) => this.onSelectGroup(data)} />
+				</Segment>
 
-					{this.groupSelectionElement()}
-				</SegmentGroup>
-			</div>
+				{this.groupSelectionElement()}
+			</Segment.Group>
 		);
 	}
 }

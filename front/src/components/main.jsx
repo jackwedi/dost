@@ -67,6 +67,8 @@ class Main extends React.Component {
 		this.setState({
 			groups,
 		});
+
+		await this.getUpcomingEvents();
 	}
 
 	async updateUserDatas() {
@@ -103,6 +105,11 @@ class Main extends React.Component {
 	async removeItemFromWishList(value) {
 		let request = (await axios.post(`http://localhost:1337/user/removewish/${this.state.googleId}/${value}`)).data;
 		this.setState({ wishList: request.wishList });
+	}
+
+	async getUpcomingEvents() {
+		let request = (await axios.get(`http://localhost:1337/user//upcomingevents/${this.state.currentUser._id}`)).data;
+		this.setState({ upcomingEvents: request });
 	}
 
 	handleLogout() {
@@ -252,6 +259,7 @@ class Main extends React.Component {
 												data={this.state}
 												setDOBModalVisible={this.setDOBModalVisible.bind(this)}
 												createUser={this.createUser.bind(this)}
+												upcomingEvents={this.state.upcomingEvents}
 											/>
 										</Route>
 									</Switch>
