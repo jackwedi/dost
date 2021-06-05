@@ -25,22 +25,7 @@ class Wishlist extends React.Component {
 		let segments;
 		if (this.props.list) {
 			segments = this.props.list.map((wish, index) => {
-				return (
-					// <Table.Row key={index}>
-					// 	<Table.Cell>{wish.item}</Table.Cell>
-					// 	<Table.Cell>
-					// 		{wish.url && (
-					// 			<a href={wish.url} target="_blank" rel="noreferrer">
-					// 				<Icon link name="linkify"></Icon>
-					// 			</a>
-					// 		)}
-					// 	</Table.Cell>
-					// 	<Table.Cell collapsing>
-					// 		<Button size="tiny" inverted color="red" icon="remove" circular onClick={(ev, data) => this.onRemoveItem(index)}></Button>
-					// 	</Table.Cell>
-					// </Table.Row>
-					<WishCard wish={wish.item} url={wish.url} index={index} onRemove={this.onRemoveItem.bind(this)} />
-				);
+				return <WishCard wish={wish.item} url={wish.url} key={index} onRemove={this.onRemoveItem.bind(this)} />;
 			});
 		}
 

@@ -11,18 +11,22 @@ function Home(props) {
 		COLORS.push(rdColor);
 		return rdColor;
 	};
+
 	if (props.upcomingEvents) {
-		for (const t of props.upcomingEvents) {
-			t.users = sortByNextDate(t.users);
-			if (t.users) {
-				const members = t.users.map((member, index) => {
+		for (const group of props.upcomingEvents) {
+			group.users = sortByNextDate(group.users);
+			if (group.users) {
+				const members = group.users.map((member, index) => {
 					return <MemberCard name={member.name} wishList={member.wishList} dateOfBirth={member.dateOfBirth} _id={member._id} key={index} />;
 				});
+
+				if (group.users.length === 0) continue;
+
 				const groupUpcomingEvents = (
 					<Grid.Column>
 						<Segment.Group>
 							<Segment color={getRandomColor()} inverted tertiary>
-								<Header>{t.pseudo}</Header>
+								<Header>{group.pseudo}</Header>
 							</Segment>
 							<Segment secondary>
 								<Card.Group>{members}</Card.Group>
@@ -30,10 +34,12 @@ function Home(props) {
 						</Segment.Group>
 					</Grid.Column>
 				);
+
 				upcomingEvents.push(groupUpcomingEvents);
 			}
 		}
 	}
+
 	return (
 		<Grid>
 			<Grid.Row>
@@ -51,12 +57,13 @@ function Home(props) {
 					</Card>
 				</Container>
 			</Grid.Row>
+
 			<Grid.Row centered>
 				<Segment circular inverted>
-					<Header content={"UPCOMING EVENTS"} />
+					<Header content={upcomingEvents.length > 0 ? "UPCOMING EVENTS" : "Nothing expected in the next days 😥"} />
 				</Segment>
 			</Grid.Row>
-			<Grid.Row columns={upcomingEvents.length}>{upcomingEvents}</Grid.Row>
+			{upcomingEvents.length > 0 && <Grid.Row columns={upcomingEvents.length}>{upcomingEvents}</Grid.Row>}
 		</Grid>
 	);
 }

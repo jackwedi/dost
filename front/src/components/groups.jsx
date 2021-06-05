@@ -43,7 +43,7 @@ class Groups extends React.Component {
 
 			// UI
 			members = members.map((member, index) => {
-				return <MemberCard name={member.name} wishList={member.wishList} dateOfBirth={member.dateOfBirth} _id={member._id} />;
+				return <MemberCard key={index} name={member.name} wishList={member.wishList} dateOfBirth={member.dateOfBirth} _id={member._id} />;
 			});
 		}
 
@@ -69,7 +69,7 @@ class Groups extends React.Component {
 					</Grid>
 				</Segment>
 				<Segment secondary textAlign="center">
-					<Select floating placeholder="Select your group" options={groups} onChange={(ev, data) => this.onSelectGroup(data)} />
+					<Select floating placeholder="Select your group" options={groups ?? []} onChange={(ev, data) => this.onSelectGroup(data)} />
 				</Segment>
 
 				{this.groupSelectionElement()}
