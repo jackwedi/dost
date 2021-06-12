@@ -1,6 +1,5 @@
 import { Tween } from "react-gsap";
 import { Container, Grid, Icon } from "semantic-ui-react";
-import BirthdayModal from "./modals/birthdayModal";
 
 function NotConnectedHome(props) {
 	return (
@@ -12,11 +11,6 @@ function NotConnectedHome(props) {
 					</div>
 				</Tween>
 			</Container>
-			<BirthdayModal
-				modalOpen={props.data.birthdayModelOpen}
-				onModalStateChange={props.setDOBModalVisible}
-				onConfirm={props.createUser}
-			></BirthdayModal>
 		</Grid.Row>
 	);
 }

@@ -11,6 +11,7 @@ import GroupWindow from "./groupWindow";
 import WishWindow from "./wishWindow";
 import Home from "./home";
 import NotConnectedHome from "./notConnectedHome";
+import BirthdayModal from "./modals/birthdayModal.jsx";
 
 class Main extends React.Component {
 	constructor(props) {
@@ -226,11 +227,7 @@ class Main extends React.Component {
 								{!this.state.isLogged && (
 									<Switch>
 										<Route path="/">
-											<NotConnectedHome
-												data={this.state}
-												setDOBModalVisible={this.setDOBModalVisible.bind(this)}
-												createUser={this.createUser.bind(this)}
-											/>
+											<NotConnectedHome data={this.state} />
 										</Route>
 									</Switch>
 								)}
@@ -263,6 +260,13 @@ class Main extends React.Component {
 											/>
 										</Route>
 									</Switch>
+								)}
+								{this.state.isLogged && (
+									<BirthdayModal
+										modalOpen={this.state.birthdayModelOpen}
+										onModalStateChange={this.setDOBModalVisible.bind(this)}
+										onConfirm={this.createUser.bind(this)}
+									></BirthdayModal>
 								)}
 							</Grid.Column>
 						</Grid.Row>
