@@ -17,6 +17,7 @@ const userSchema = new Schema(
 			required: true,
 		},
 		wishList: [{ item: String, url: String }],
+		santaDraws: [{ year: String, userId: String }],
 	},
 	{
 		unique: true,
